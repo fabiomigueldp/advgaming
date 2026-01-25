@@ -1,0 +1,250 @@
+---
+/**
+ * Testimonials - Client Testimonials Carousel
+ * AAA quality testimonial section with glassmorphism cards
+ */
+import { marked } from "marked";
+import { Icon } from "astro-icon/components";
+
+interface Testimonial {
+  quote: string;
+  author: string;
+  role: string;
+  company: string;
+  rating?: number;
+}
+
+const { title, content, testimonials, style } = Astro.props;
+const defaultRating = 5;
+---
+
+<section
+  class={`testimonials container-${style?.container || "lg"} ${style?.block_class || "py-20"}`}
+  id="testimonials"
+>
+  {content && (
+    <div set:html={marked.parse(content)} class="richtext text-center mb-12 fade-up" />
+  )}
+
+  <div class="testimonials-wrapper">
+    <div class="testimonials-track" id="testimonials-track">
+      {testimonials?.map((testimonial: Testimonial, index: number) => (
+        <article
+          class="testimonial-card glass fade-up"
+          style={`--animation-delay: ${(index + 1) * 200}ms`}
+        >
+          <div class="testimonial-rating">
+            {Array.from({ length: testimonial.rating || defaultRating }, (_, i) => (
+              <span class="star">★</span>
+            ))}
+          </div>
+          
+          <blockquote class="testimonial-quote">
+            <span class="quote-icon">"</span>
+            <p set:html={testimonial.quote} />
+          </blockquote>
+
+          <footer class="testimonial-author">
+            <div class="author-avatar">
+              <span class="avatar-initial">{testimonial.author.charAt(0)}</span>
+            </div>
+            <div class="author-info">
+              <cite class="author-name">{testimonial.author}</cite>
+              <span class="author-role">{testimonial.role}</span>
+              <span class="author-company">{testimonial.company}</span>
+            </div>
+          </footer>
+
+        </article>
+      ))}
+    </div>
+
+    <div class="testimonials-nav">
+      <button class="nav-btn prev" aria-label="Previous testimonial" id="testimonials-prev">
+        <Icon name="left" class="w-5 h-5" />
+      </button>
+      <div class="nav-dots" id="testimonials-dots"></div>
+      <button class="nav-btn next" aria-label="Next testimonial" id="testimonials-next">
+        <Icon name="right" class="w-5 h-5" />
+      </button>
+    </div>
+  </div>
+</section>
+
+<style lang="postcss">
+  .testimonials {
+    @apply relative overflow-hidden;
+  }
+
+  .testimonials-wrapper {
+    @apply relative;
+  }
+
+  .testimonials-track {
+    @apply flex gap-6 transition-transform duration-500 ease-out;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    @screen md {
+      @apply grid gap-8;
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .testimonial-card {
+    @apply relative flex flex-col p-8 rounded-2xl min-w-[85vw] md:min-w-0;
+    scroll-snap-align: start;
+    background-color: rgb(var(--card-bg));
+    border: 1px solid rgb(var(--card-border));
+    color: rgb(var(--card-fg));
+    box-shadow: 0 12px 30px -24px rgb(var(--shadow-color) / 0.6);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      border-color: rgb(var(--color-primary) / 0.3);
+    }
+  }
+
+  .testimonial-rating {
+    @apply flex gap-1 mb-4;
+    
+    .star {
+      @apply text-xl;
+      color: rgb(var(--color-warning));
+    }
+  }
+
+  .testimonial-quote {
+    @apply relative flex-1 mb-6;
+    
+    .quote-icon {
+      @apply absolute -top-2 -left-1 text-5xl font-serif leading-none opacity-30;
+      color: rgb(var(--color-primary));
+    }
+
+    p {
+      @apply text-lg leading-relaxed italic opacity-90 pl-6;
+    }
+  }
+
+  .testimonial-author {
+    @apply flex items-center gap-4 pt-4;
+    border-top: 1px solid rgb(var(--card-border));
+  }
+
+  .author-avatar {
+    @apply w-12 h-12 rounded-full flex items-center justify-center;
+    background-color: rgb(var(--color-primary) / 0.12);
+    border: 1px solid rgb(var(--color-primary) / 0.2);
+  }
+
+  .avatar-initial {
+    @apply font-bold text-lg;
+    color: rgb(var(--color-primary));
+  }
+
+  .author-info {
+    @apply flex flex-col;
+  }
+
+  .author-name {
+    @apply font-bold not-italic;
+  }
+
+  .author-role {
+    @apply text-sm opacity-70;
+  }
+
+  .author-company {
+    @apply text-xs opacity-50;
+  }
+
+  .testimonials-nav {
+    @apply flex items-center justify-center gap-4 mt-8;
+    
+    @screen md {
+      @apply hidden;
+    }
+  }
+
+  .nav-btn {
+    @apply w-10 h-10 rounded-full flex items-center justify-center;
+    background-color: rgb(var(--muted-bg));
+    border: 1px solid rgb(var(--card-border));
+    color: rgb(var(--card-fg));
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: rgb(var(--card-bg));
+      border-color: rgb(var(--color-primary) / 0.4);
+      color: rgb(var(--color-primary));
+    }
+  }
+
+  .nav-dots {
+    @apply flex gap-2;
+    
+    :global(.dot) {
+      @apply w-2 h-2 rounded-full transition-all duration-300;
+      background: rgb(var(--card-border));
+      
+      &.active {
+        @apply w-6;
+        background: rgb(var(--color-primary));
+      }
+    }
+  }
+</style>
+
+<script>
+  const track = document.getElementById('testimonials-track');
+  const prevBtn = document.getElementById('testimonials-prev');
+  const nextBtn = document.getElementById('testimonials-next');
+  const dotsContainer = document.getElementById('testimonials-dots');
+  
+  if (track && prevBtn && nextBtn && dotsContainer) {
+    const cards = track.querySelectorAll('.testimonial-card');
+    let currentIndex = 0;
+    
+    // Create dots
+    cards.forEach((_, i) => {
+      const dot = document.createElement('span');
+      dot.className = `dot ${i === 0 ? 'active' : ''}`;
+      dot.addEventListener('click', () => goTo(i));
+      dotsContainer.appendChild(dot);
+    });
+    
+    const dots = dotsContainer.querySelectorAll('.dot');
+    
+    const goTo = (index: number) => {
+      currentIndex = Math.max(0, Math.min(index, cards.length - 1));
+      const card = cards[currentIndex] as HTMLElement;
+      track.scrollTo({ left: card.offsetLeft, behavior: 'smooth' });
+      updateDots();
+    };
+    
+    const updateDots = () => {
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentIndex);
+      });
+    };
+    
+    prevBtn.addEventListener('click', () => goTo(currentIndex - 1));
+    nextBtn.addEventListener('click', () => goTo(currentIndex + 1));
+    
+    // Auto-advance on mobile
+    let autoPlay = setInterval(() => {
+      if (window.innerWidth < 768) {
+        goTo((currentIndex + 1) % cards.length);
+      }
+    }, 5000);
+    
+    track.addEventListener('touchstart', () => clearInterval(autoPlay));
+  }
+</script>

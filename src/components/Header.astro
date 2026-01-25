@@ -1,0 +1,167 @@
+---
+import NavMobile from "@components/navigation/NavMobile.vue";
+import { Icon } from "astro-icon/components";
+import ColorSwitch from "@components/common/ColorSwitch.vue";
+import LanguageSwitch from "@components/common/LanguageSwitch.vue";
+import Logo from "@components/Logo.astro";
+
+import { t, localizeUrl, getValidLocale, type SupportedLocale, DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@util/translate";
+
+const { menu, title, social, color, cta, lang: propsLang } = Astro.props;
+
+// Get language from props or URL
+const urlLang = Astro.url.pathname.split('/').filter(Boolean)[0];
+const lang = getValidLocale(propsLang || urlLang || DEFAULT_LOCALE);
+
+const currentPath = Astro.url.pathname;
+
+// Helper to check if a link is active
+const isActive = (href: string) => {
+  const localizedHref = localizeUrl(href, lang);
+  // Remove locale prefix for comparison
+  const pathWithoutLocale = currentPath.replace(new RegExp(`^/${lang}/?`), '/');
+  const hrefWithoutLocale = href.startsWith('/') ? href : `/${href}`;
+  
+  if (pathWithoutLocale === '/' && hrefWithoutLocale === '/') return true;
+  if (pathWithoutLocale !== '/' && hrefWithoutLocale !== '/' && pathWithoutLocale.startsWith(hrefWithoutLocale)) return true;
+  return false;
+};
+
+// Localize menu links
+const localizedMenu = menu?.map((item: { href: string; label: string }) => ({
+  ...item,
+  href: localizeUrl(item.href, lang)
+}));
+
+const localizedCta = cta?.map((item: { href: string; label: string }) => ({
+  ...item,
+  href: item.href.startsWith('#') ? item.href : localizeUrl(item.href, lang)
+}));
+---
+
+<header
+  class={`nav fixed inset-x-0 top-0 z-50 nav-${color}`}
+  transition:name="nav"
+>
+  <nav
+    class="container-xl nav__grid flex h-20 items-center justify-between gap-6 transition-all duration-300"
+  >
+    <a
+      href={localizeUrl('/', lang)}
+      aria-label={title}
+      class="flex h-full items-center justify-start"
+    >
+      <Logo class="h-8 w-auto" />
+    </a>
+    
+    {
+      localizedMenu && (
+        <div class="nav-links hidden items-center gap-1 md:flex">
+          {localizedMenu.map((link) => (
+            <a
+              href={link.href}
+              class={`nav-link ${isActive(link.href) ? "active" : ""}`}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    <div class="flex items-center gap-3">
+      {
+        localizedCta && localizedCta.length > 0 && (
+          <div class="hidden sm:flex">
+            {localizedCta.map((link) => (
+              <a
+                href={link.href}
+                class="btn btn-primary btn-sm"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        )
+      }
+
+      <LanguageSwitch 
+        client:load 
+        currentLocale={lang} 
+        currentPath={currentPath} 
+      />
+      <ColorSwitch client:load />
+
+      <div class="md:hidden">
+        <NavMobile
+          menu={localizedMenu}
+          active={currentPath}
+          currentLocale={lang}
+          currentPath={currentPath}
+          client:idle
+          translations={{ menu: t("menu", lang), close: t("close", lang) }}
+        >
+          <Icon name="menu-solid" class="h-8 w-8" slot="menu" />
+          <Icon name="close" class="h-8 w-8" slot="close" />
+          <Logo class="w-full max-w-[180px]" slot="logo" />
+
+          <div
+            class="flex w-full flex-wrap justify-center gap-3 py-4"
+            slot="social"
+          >
+            {
+              social?.map((link, index) => (
+                <a
+                  href={link.href}
+                  class="grid h-10 w-10 place-items-center rounded-lg transition-colors hover:bg-primary"
+                  style="background-color: rgb(var(--muted-bg)); color: rgb(var(--card-fg));"
+                  target="_blank"
+                  aria-label={link.label}
+                >
+                  <Icon name={link.icon} class="h-5 w-5" />
+                </a>
+              ))
+            }
+          </div>
+        </NavMobile>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+  .nav {
+    @apply transition-all duration-300;
+
+    &__grid {
+      @screen md {
+        @apply grid;
+        grid-template-columns: auto 1fr auto;
+      }
+    }
+  }
+  
+  .nav-links {
+    @apply justify-center;
+  }
+  
+  .nav-link {
+    @apply px-4 py-2 text-sm font-medium rounded-lg transition-colors;
+    @apply text-current opacity-80 hover:opacity-100;
+    background-color: transparent;
+
+    &:hover,
+    &:focus-visible {
+      background-color: rgb(var(--nav-hover) / 0.12);
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgb(var(--color-primary) / 0.5);
+      outline-offset: 2px;
+    }
+  }
+  
+  .nav-link.active {
+    @apply opacity-100 text-primary;
+  }
+</style>

@@ -1,0 +1,362 @@
+---
+/**
+ * Product Detail Page
+ * Landing page style for individual products
+ */
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { Icon } from "astro-icon/components";
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, localizeUrl, type SupportedLocale } from "@util/translate";
+
+export async function getStaticPaths() {
+  const products = await getCollection("products");
+  
+  const paths: Array<{
+    params: { lang: string; slug: string };
+    props: { product: CollectionEntry<"products">; lang: SupportedLocale };
+  }> = [];
+
+  for (const locale of SUPPORTED_LOCALES) {
+    const localeProducts = products.filter((p) => p.slug.startsWith(`${locale}/`));
+    
+    for (const product of localeProducts) {
+      const slugWithoutLocale = product.slug.replace(`${locale}/`, '');
+      
+      paths.push({
+        params: { 
+          lang: locale,
+          slug: slugWithoutLocale
+        },
+        props: { 
+          product,
+          lang: locale
+        },
+      });
+    }
+  }
+
+  return paths;
+}
+
+interface Props {
+  product: CollectionEntry<"products">;
+  lang: SupportedLocale;
+}
+
+const { product, lang } = Astro.props;
+const { data } = product;
+const { Content } = await product.render();
+
+const seoTitle = data.seo?.title || `${data.name} | Adventury Gaming`;
+const seoDescription = data.seo?.description || data.short_description;
+
+const levelLabels = {
+  free: 'Gratuito',
+  basic: 'Basic',
+  intermediate: 'Intermediate',
+  advanced: 'Advanced'
+};
+
+const levelBadgeClass = {
+  free: 'badge-free',
+  basic: 'badge-basic',
+  intermediate: 'badge-intermediate',
+  advanced: 'badge-advanced'
+};
+
+// Check if product is free (no checkout needed)
+const isFree = data.product_level === 'free';
+---
+
+<BaseLayout title={seoTitle} description={seoDescription} lang={lang}>
+  <main class="surface-dark min-h-screen">
+    <!-- Hero Section -->
+    <section class="pt-32 pb-16 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent"></div>
+      <div class="container-xl relative">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <div class="space-y-6">
+            <span class={`badge ${levelBadgeClass[data.product_level]}`}>
+              {levelLabels[data.product_level]}
+            </span>
+            
+            <h1 class="title text-light">
+              {data.hero?.headline || data.name}
+            </h1>
+            
+            {data.hero?.subheadline && (
+              <p class="text-xl text-neutral-300">
+                {data.hero.subheadline}
+              </p>
+            )}
+            
+            <div class="flex items-baseline gap-4">
+              {isFree ? (
+                <span class="text-4xl font-bold text-success">Gratis</span>
+              ) : (
+                <span class="text-4xl font-bold text-light">{data.price_display}</span>
+              )}
+              {!isFree && data.currency && (
+                <span class="text-neutral-500">{data.currency}</span>
+              )}
+            </div>
+            
+            <div class="flex flex-wrap gap-4 pt-4">
+               {isFree ? (
+                 <a href="#download" class="btn btn-primary btn-lg">
+                   {data.hero?.primary_cta_label || 'Download Gratuito'}
+                 </a>
+              ) : (
+                <button 
+                  id="buy-button" 
+                  class="btn btn-primary btn-lg"
+                  data-price-id={data.stripe?.price_id}
+                  data-product-slug={product.slug}
+                >
+                  {data.hero?.primary_cta_label || 'Comprar Agora'}
+                </button>
+              )}
+              
+              {data.hero?.secondary_cta_label && (
+                <a href="#details" class="btn btn-secondary btn-lg">
+                  {data.hero.secondary_cta_label}
+                </a>
+              )}
+            </div>
+          </div>
+          
+          <div class="product-preview">
+            <div class="aspect-video bg-neutral-800 rounded-xl overflow-hidden flex items-center justify-center relative shadow-2xl">
+              <img 
+                src={data.thumbnail} 
+                alt={data.name}
+                class="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Highlights Section -->
+    {data.highlights && data.highlights.length > 0 && (
+      <section class="py-16 border-t border-neutral-800">
+        <div class="container-xl">
+          <h2 class="text-2xl font-bold text-light mb-8">Destaques</h2>
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {data.highlights.map((highlight) => (
+              <div class="flex items-start gap-3 p-4 bg-neutral-900/50 rounded-lg">
+                <Icon name="check-o" class="w-6 h-6 text-success flex-shrink-0 mt-0.5" />
+                <span class="text-neutral-300">{highlight}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- What's Included Section -->
+    {data.whats_included && data.whats_included.length > 0 && (
+      <section class="py-16 border-t border-neutral-800" id="details">
+        <div class="container-xl">
+          <h2 class="text-2xl font-bold text-light mb-8">O que esta incluso</h2>
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {data.whats_included.map((section) => (
+              <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-primary">{section.section}</h3>
+                <ul class="space-y-2">
+                  {section.items.map((item) => (
+                    <li class="flex items-start gap-2 text-neutral-400">
+                      <Icon name="check-o" class="w-4 h-4 text-neutral-600 flex-shrink-0 mt-1" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Compatibility Section -->
+    {data.compatibility && data.compatibility.length > 0 && (
+      <section class="py-16 border-t border-neutral-800">
+        <div class="container-xl">
+          <h2 class="text-2xl font-bold text-light mb-8">Compatibilidade</h2>
+          <div class="flex flex-wrap gap-3">
+            {data.compatibility.map((platform) => (
+              <span class="px-4 py-2 bg-neutral-800 rounded-lg text-neutral-300 text-sm">
+                {platform}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Installation Steps -->
+    {data.installation_steps && data.installation_steps.length > 0 && (
+      <section class="py-16 border-t border-neutral-800">
+        <div class="container-xl">
+          <h2 class="text-2xl font-bold text-light mb-8">Instalacao em minutos</h2>
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data.installation_steps.map((step) => (
+              <div class="relative p-6 bg-neutral-900/50 rounded-lg">
+                <div class="absolute -top-3 -left-3 w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                  {step.step}
+                </div>
+                <h3 class="text-lg font-semibold text-light mb-2 pt-2">{step.title}</h3>
+                <p class="text-neutral-400 text-sm">{step.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- FAQ Section -->
+    {data.faq && data.faq.length > 0 && (
+      <section class="py-16 border-t border-neutral-800">
+        <div class="container-xl">
+          <h2 class="text-2xl font-bold text-light mb-8">Perguntas Frequentes</h2>
+          <div class="grid md:grid-cols-2 gap-6 max-w-4xl">
+            {data.faq.map((item) => (
+              <div class="space-y-2">
+                <h3 class="font-semibold text-light">{item.question}</h3>
+                <p class="text-neutral-400 text-sm">{item.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- License Summary -->
+    {data.license_summary && (
+      <section class="py-16 border-t border-neutral-800">
+        <div class="container-xl">
+          <div class="bg-neutral-900/50 rounded-lg p-6 max-w-2xl">
+            <h2 class="text-lg font-bold text-light mb-3">Licenca</h2>
+            <p class="text-neutral-400 text-sm mb-4">{data.license_summary}</p>
+            <a href={localizeUrl('/legal/license', lang)} class="text-primary text-sm hover:underline">
+              Ver termos completos da licenca
+            </a>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- MDX Content -->
+    <section class="py-16 border-t border-neutral-800">
+      <div class="container-md">
+        <div class="richtext text-neutral-300">
+          <Content />
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="py-20 border-t border-neutral-800 bg-gradient-to-t from-primary/5 to-transparent" id="download">
+      <div class="container-xl text-center">
+        <h2 class="text-3xl font-bold text-light mb-4">
+          {isFree ? 'Baixe agora, e gratis!' : 'Pronto para elevar sua stream?'}
+        </h2>
+        <p class="text-neutral-400 mb-8 max-w-xl mx-auto">
+          {isFree 
+            ? 'Comece sua jornada como streamer com um kit profissional, sem custos.'
+            : `Garanta seu ${data.name} e comece a impressionar sua audiencia hoje.`
+          }
+        </p>
+        
+        <div class="flex flex-wrap justify-center gap-4">
+          {isFree ? (
+            <a href="#" class="btn btn-primary btn-lg" id="download-free-btn">
+              Download Gratuito
+            </a>
+          ) : (
+            <>
+              <button 
+                id="buy-button-footer" 
+                class="btn btn-primary btn-lg"
+                data-price-id={data.stripe?.price_id}
+                data-product-slug={product.slug}
+              >
+                Comprar por {data.price_display}
+              </button>
+            </>
+          )}
+          
+          <a href={localizeUrl('/products', lang)} class="btn btn-ghost btn-lg">
+            Ver outros kits
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Upsell -->
+    {data.upsell && (
+      <section class="py-12 border-t border-neutral-800">
+        <div class="container-xl text-center">
+          <a 
+            href={localizeUrl(`/products/${data.upsell.product_slug}`, lang)}
+            class="text-primary hover:underline"
+          >
+            {data.upsell.label}
+          </a>
+        </div>
+      </section>
+    )}
+  </main>
+</BaseLayout>
+
+<script>
+  // Handle buy button clicks
+  const buyButtons = document.querySelectorAll('#buy-button, #buy-button-footer');
+  
+  buyButtons.forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const priceId = btn.getAttribute('data-price-id');
+      const productSlug = btn.getAttribute('data-product-slug');
+      
+      if (!priceId || priceId === 'price_PLACEHOLDER_BASIC' || priceId === 'price_PLACEHOLDER_INTERMEDIATE' || priceId === 'price_PLACEHOLDER_ADVANCED') {
+        alert('Checkout em breve! Configure o Stripe para habilitar compras.');
+        return;
+      }
+      
+      btn.setAttribute('disabled', 'true');
+      btn.textContent = 'Processando...';
+      
+      try {
+        const lang = window.location.pathname.split('/')[1] || 'pt';
+        
+        const response = await fetch('/api/stripe/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            priceId,
+            lang,
+            productSlug
+          }),
+        });
+        
+        const data = await response.json();
+        
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          throw new Error(data.error || 'Erro ao criar sessao de checkout');
+        }
+      } catch (error) {
+        console.error('Checkout error:', error);
+        alert('Erro ao processar. Tente novamente.');
+        btn.removeAttribute('disabled');
+        btn.textContent = 'Comprar Agora';
+      }
+    });
+  });
+</script>

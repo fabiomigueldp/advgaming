@@ -1,0 +1,16 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = 'h-8' } = Astro.props;
+---
+
+<img
+  src="/logo-adventury.png"
+  alt="Adventury Gaming"
+  class={className}
+  loading="eager"
+  width="200"
+  height="60"
+/>

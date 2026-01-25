@@ -1,0 +1,250 @@
+---
+import { getEntry } from "astro:content";
+import { t, getValidLocale, type SupportedLocale, DEFAULT_LOCALE, localizeUrl } from "@util/translate";
+import { Icon } from "astro-icon/components";
+import { marked } from "marked";
+import Picture from "@components/media/Picture.astro";
+import BaseHead from "@components/BaseHead.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import Contact from "@components/form/Contact.vue";
+import Dialog from "@components/dialog/Dialog.vue";
+import Newsletter from "@components/form/Newsletter.vue";
+import Auth from "@components/form/Auth.vue";
+import Init from "@components/common/Init.vue";
+import FloatingCTA from "@components/navigation/FloatingCTA.astro";
+import "@fontsource-variable/dm-sans";
+
+// Get language from props, URL, or middleware
+const propsLang = Astro.props.lang;
+const urlLang = Astro.url.pathname.split('/').filter(Boolean)[0];
+const localsLang = Astro.locals?.lang;
+
+const lang = getValidLocale(propsLang || urlLang || localsLang || DEFAULT_LOCALE);
+const currency = import.meta.env.CURRENCY || "USD";
+
+const { title, description, page_class, thumbnail, og_image, nav_color } =
+  Astro.props;
+
+// Try to load localized config, fall back to default
+const getLocalizedConfig = async (configName: string) => {
+  try {
+    // First try locale-specific config (e.g., "en/navigation")
+    const localizedEntry = await getEntry("config", `${lang}/${configName}`);
+    if (localizedEntry) return localizedEntry;
+  } catch (e) {
+    // Fall through to default
+  }
+  // Fall back to default config
+  return await getEntry("config", configName);
+};
+
+const navigation = await getLocalizedConfig("navigation");
+const about = await getLocalizedConfig("about");
+const contact = await getLocalizedConfig("contact");
+
+const newsletters = () => {
+  if (!contact?.data?.newsletter) {
+    return [];
+  }
+  const data = JSON.parse(JSON.stringify(contact.data.newsletter));
+  let items = [];
+  if (
+    contact?.data?.newsletter?.list &&
+    contact.data.newsletter.list.length > 0
+  ) {
+    items = contact.data.newsletter.list;
+    delete data.list;
+  }
+
+  return [...items, data];
+};
+---
+
+<!doctype html>
+<html lang={lang} data-currency={currency}>
+  <head>
+    <BaseHead
+      title={title}
+      description={description}
+      thumbnail={!!og_image ? og_image : thumbnail}
+    />
+  </head>
+  <body class={`surface-base ${page_class || ""}`}>
+    <Header
+      title={title}
+      color={nav_color}
+      menu={navigation.data.main_menu}
+      cta={navigation.data.cta_menu}
+      social={contact.data.social}
+      about={about.data}
+      lang={lang}
+    />
+    <main>
+      <slot />
+    </main>
+    <div
+      class="pointer-events-none fixed bottom-0 right-0 z-40 w-full"
+    >
+      <div class="container-xl relative flex justify-end pb-6 pr-4">
+        <a
+          href="#top"
+          aria-label={t("back_to_top", lang)}
+          class="btn surface-primary btn-to-top group pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full opacity-0 shadow-xl ring-2 ring-white/20 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:ring-white/40"
+        >
+          <svg
+            class="h-6 w-6 shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 19V5m0 0l-7 7m7-7l7 7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <Footer lang={lang}>
+      <slot name="footer" />
+    </Footer>
+
+    <FloatingCTA href="#contact" label={t("contact", lang)} />
+
+    <Init client:idle />
+    <svg class="hide hidden">
+      <filter id="noiseFilter">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="2.29"
+          numOctaves="1"
+          stitchTiles="stitch"></feTurbulence>
+      </filter>
+    </svg>
+
+    <script>
+      const html = document.getElementsByTagName("html")[0];
+
+      const SmoothScroll = () => {
+        html.style["scroll-behavior"] = "auto";
+      };
+      SmoothScroll();
+      document.addEventListener("astro:beforeload", SmoothScroll);
+
+      // Controle de visibilidade do botão "Voltar ao topo"
+      const initBackToTop = () => {
+        const backToTopBtn = document.querySelector(".btn-to-top");
+        if (!backToTopBtn) return;
+
+        const toggleBackToTop = () => {
+          const scrollTop = window.scrollY || document.documentElement.scrollTop;
+          
+          if (scrollTop > 300) {
+            backToTopBtn.classList.remove("opacity-0");
+            backToTopBtn.classList.add("opacity-100");
+          } else {
+            backToTopBtn.classList.add("opacity-0");
+            backToTopBtn.classList.remove("opacity-100");
+          }
+        };
+
+        // Verifica a posição inicial
+        toggleBackToTop();
+        
+        // Adiciona listener para scroll
+        window.addEventListener("scroll", toggleBackToTop, { passive: true });
+      };
+
+      // Inicializa quando a página carrega
+      initBackToTop();
+      
+      // Reinicializa após navegação do Astro
+      document.addEventListener("astro:page-load", initBackToTop);
+    </script>
+    <Dialog link="contact" type="contact" client:idle>
+      <Contact client:visible contact={contact.data.form} slot="content">
+        {
+          contact?.data?.form?.intro && (
+            <div
+              set:html={marked.parse(contact.data.form.intro)}
+              slot="text"
+            />
+          )
+        }
+      </Contact>
+      <Picture
+        slot="image"
+        src={contact.data.form.thumbnail}
+        alt={`contact`}
+        sizes="(max-width: 768px) calc(100vw - 4rem), (min-width: 1024px) 440px, calc(40vw - 4rem)"
+        aspect={1}
+        layout="fill"
+        loading="lazy"
+        artDirectives={[
+          {
+            media: "(max-width: 768px)",
+            aspect: 21 / 9,
+            src: contact.data.form.thumbnail,
+            layout: "constrained",
+            breakpoints: [500, 601, 768, 820, 962, 1280, 1440, 1536, 1920],
+          },
+        ]}
+      />
+    </Dialog>
+
+    {
+      newsletters().map((item) => (
+        <Dialog link={item.link} type="newsletter" client:idle>
+          <Newsletter client:visible slot="content" data={item} />
+
+          <Picture
+            slot="image"
+            src={item.thumbnail}
+            alt={item.title}
+            sizes="50vw"
+            aspect={4 / 5}
+            layout="fill"
+            loading="lazy"
+            artDirectives={[
+              {
+                media: "(max-width: 768px)",
+                aspect: 21 / 9,
+                layout: "constrained",
+                src: item.thumbnail,
+                breakpoints: [500, 601, 768, 820, 962],
+              },
+            ]}
+          />
+        </Dialog>
+      ))
+    }
+
+    <!-- <Dialog link="auth" type="auth" client:idle>
+      <div slot="content">
+        <Auth client:visible />
+      </div>
+      <Picture
+        slot="image"
+        src={contact.data.auth.thumbnail}
+        alt={`Auth`}
+        sizes="(max-width: 768px) calc(100vw - 4rem), (min-width: 1024px) 440px, calc(40vw - 4rem)"
+        aspect={4 / 5}
+        layout="fill"
+        loading="lazy"
+        artDirectives={[
+          {
+            media: "(max-width: 768px)",
+            aspect: 21 / 9,
+            layout: "constrained",
+            src: contact.data.auth.thumbnail,
+            breakpoints: [500, 601, 768, 820, 962],
+          },
+        ]}
+      />
+    </Dialog> -->
+  </body>
+</html>

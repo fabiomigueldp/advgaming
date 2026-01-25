@@ -1,0 +1,146 @@
+---
+/**
+ * Blog Archive Pages by Tag with i18n Support
+ * 
+ * This file handles tag-filtered blog listings
+ * with full internationalization support.
+ */
+import { getCollection, getEntry } from "astro:content";
+import PageLayout from "@layouts/PageLayout.astro";
+import Intersecting from "@components/common/Intersecting.vue";
+import ItemCard from "@components/cards/ItemCard.astro";
+import Pager from "@components/navigation/Pager.astro";
+import { slugify, getCategoryData, getPagination } from "@util/helpers";
+import { SUPPORTED_LOCALES, type SupportedLocale } from "@util/translate";
+
+export async function getStaticPaths({ paginate }) {
+  const allPosts = await getCollection("blog");
+  
+  const paths = [];
+  
+  for (const locale of SUPPORTED_LOCALES) {
+    // Get localized blog config
+    let blogConfig;
+    try {
+      blogConfig = await getEntry("config", `${locale}/blog`);
+    } catch {}
+    if (!blogConfig) {
+      blogConfig = await getEntry("config", "blog");
+    }
+    const { data } = blogConfig;
+    
+    // Filter posts for this locale that have tags
+    const localePosts = allPosts
+      .filter((post) => post.slug.startsWith(`${locale}/`) && !!post.data?.tag)
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+    
+    if (localePosts.length === 0) continue;
+
+    // Get all unique tags for this locale
+    const allFilters = localePosts
+      .map((post) => post.data.tag)
+      .filter((post) => !!post);
+    const filters = [...new Set(allFilters.flat(1))];
+
+    // Get pagination for each tag
+    const paginationResults = getPagination(localePosts, filters, data, "tag");
+    
+    for (const result of paginationResults) {
+      if (result) {
+        paths.push({
+          params: {
+            lang: locale,
+            slug: result.params.slug
+          },
+          props: {
+            ...result.props,
+            lang: locale
+          }
+        });
+      }
+    }
+  }
+  
+  return paths;
+}
+
+interface Props {
+  lastPage: number;
+  currentPage: number;
+  page: any[];
+  filter: string;
+  filters: string[];
+  filter_type: string;
+  lang: SupportedLocale;
+}
+
+const { lastPage, currentPage, page, filter, filters, filter_type, lang } = Astro.props;
+const currentLang = lang || (Astro.params.lang as SupportedLocale);
+
+// Get localized blog config
+let blogConfig;
+try {
+  blogConfig = await getEntry("config", `${currentLang}/blog`);
+} catch {}
+if (!blogConfig) {
+  blogConfig = await getEntry("config", "blog");
+}
+let { data } = blogConfig;
+
+// Localized base URL
+const base_url = `/${currentLang}/${import.meta.env.BLOG_SLUG || "news"}`;
+
+const pageData = getCategoryData(data.blog_tags, filter);
+data = {
+  ...data,
+  ...pageData,
+};
+
+const pagerSlug = `${base_url}/${filter_type}/${slugify(filter)}`;
+const sizes =
+  "(max-width: 639px) calc(100vw - 4rem), (min-width: 1024px) 450px,  calc(50vw - 4rem )";
+---
+
+<PageLayout
+  page={{
+    data: page,
+    lastPage: lastPage,
+    currentPage: currentPage,
+  }}
+  {...data}
+  {filters}
+  {filter}
+  base_url={base_url}
+  lang={currentLang}
+>
+  <section>
+    <ul class={`grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8 lg:gap-20 pb-20`}>
+      {
+        page.map((post) => (
+          <li>
+            <Intersecting client:visible>
+              <ItemCard
+                content={post}
+                base_url={base_url}
+                {sizes}
+                animate={true}
+                lang={currentLang}
+              />
+            </Intersecting>
+          </li>
+        ))
+      }
+    </ul>
+    {
+      lastPage > 1 && (
+        <div class="container-md pb-4">
+          <Pager
+            totalPage={lastPage}
+            currentPage={currentPage}
+            url={pagerSlug}
+          />
+        </div>
+      )
+    }
+  </section>
+</PageLayout>

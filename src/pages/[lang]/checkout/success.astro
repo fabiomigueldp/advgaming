@@ -1,0 +1,87 @@
+---
+/**
+ * Checkout Success Page
+ * Displayed after successful Stripe payment
+ */
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { Icon } from "astro-icon/components";
+import { SUPPORTED_LOCALES, localizeUrl, type SupportedLocale } from "@util/translate";
+
+export async function getStaticPaths() {
+  return SUPPORTED_LOCALES.map((locale) => ({
+    params: { lang: locale },
+    props: { lang: locale }
+  }));
+}
+
+interface Props {
+  lang: SupportedLocale;
+}
+
+const { lang } = Astro.props;
+
+const pageTitle = "Compra Confirmada";
+const pageDescription = "Sua compra foi realizada com sucesso.";
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} lang={lang}>
+  <main class="surface-dark min-h-screen">
+    <section class="pt-32 pb-20">
+      <div class="container-md text-center">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-success/10 rounded-full mb-8">
+          <Icon name="check-o" class="w-12 h-12 text-success" />
+        </div>
+        
+        <h1 class="title-md text-light mb-4">Compra Confirmada!</h1>
+        
+        <p class="text-xl text-neutral-300 mb-8 max-w-xl mx-auto">
+          Obrigado por sua compra. Voce recebera um email com o link de download em instantes.
+        </p>
+        
+        <div class="bg-neutral-900/50 rounded-lg p-6 max-w-md mx-auto mb-8 text-left">
+          <h2 class="font-semibold text-light mb-4">Proximos passos:</h2>
+          <ol class="space-y-3 text-neutral-400 text-sm">
+            <li class="flex gap-3">
+              <span class="w-6 h-6 bg-primary/20 text-primary rounded flex items-center justify-center flex-shrink-0 text-xs font-bold">1</span>
+              <span>Verifique seu email (incluindo a pasta de spam)</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="w-6 h-6 bg-primary/20 text-primary rounded flex items-center justify-center flex-shrink-0 text-xs font-bold">2</span>
+              <span>Clique no link de download no email</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="w-6 h-6 bg-primary/20 text-primary rounded flex items-center justify-center flex-shrink-0 text-xs font-bold">3</span>
+              <span>Extraia os arquivos e siga o guia de instalacao</span>
+            </li>
+          </ol>
+        </div>
+        
+        <div class="space-y-4">
+          <p class="text-neutral-500 text-sm">
+            Problemas com o download? Entre em contato com nosso suporte.
+          </p>
+          
+          <div class="flex flex-wrap justify-center gap-4">
+            <a href={localizeUrl('/support', lang)} class="btn btn-secondary">
+              Acessar Suporte
+            </a>
+            <a href={localizeUrl('/products', lang)} class="btn btn-ghost">
+              Ver mais produtos
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  // Optionally fetch session details from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const sessionId = urlParams.get('session_id');
+  
+  if (sessionId) {
+    console.log('Checkout session:', sessionId);
+    // Could fetch additional session details here if needed
+  }
+</script>

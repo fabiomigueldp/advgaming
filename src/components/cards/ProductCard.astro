@@ -1,0 +1,126 @@
+---
+/**
+ * ProductCard Component
+ * Displays a product in a card format for listings
+ */
+import type { CollectionEntry } from "astro:content";
+import { Icon } from "astro-icon/components";
+import { localizeUrl, type SupportedLocale } from "@util/translate";
+
+interface Props {
+  product: CollectionEntry<"products">;
+  lang: SupportedLocale;
+}
+
+const { product, lang } = Astro.props;
+const { data, slug } = product;
+
+// Extract slug without locale prefix
+const productSlug = slug.includes('/') ? slug.split('/').pop() : slug;
+const productUrl = localizeUrl(`/products/${productSlug}`, lang);
+
+const levelLabels = {
+  free: "Gratuito",
+  basic: "Básico",
+  intermediate: "Intermediário",
+  advanced: "Avançado",
+};
+
+const levelBadgeClass = {
+  free: 'badge-free',
+  basic: 'badge-basic',
+  intermediate: 'badge-intermediate',
+  advanced: 'badge-advanced'
+};
+---
+
+<article class="product-card group">
+  <a href={productUrl} class="block">
+      <div class="product-card__image">
+       <div class="product-card__media aspect-video rounded-t-lg overflow-hidden relative">
+        <img 
+          src={data.thumbnail} 
+          alt={data.name}
+          class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/60 to-transparent"></div>
+      </div>
+
+      <span class={`badge ${levelBadgeClass[data.product_level]} absolute top-4 left-4`}>
+        {levelLabels[data.product_level]}
+      </span>
+    </div>
+    
+    <div class="product-card__content">
+      <h3 class="product-card__title">{data.name}</h3>
+      <p class="product-card__description">{data.short_description}</p>
+      
+      <div class="product-card__footer">
+        <div class="product-card__price">
+          {data.product_level === 'free' ? (
+            <span class="text-success font-bold text-xl">Grátis</span>
+          ) : (
+            <span class="product-card__price-text font-bold text-xl">{data.price_display}</span>
+          )}
+        </div>
+        
+        <div class="product-card__actions">
+          <span class={`btn btn-sm ${data.product_level === "free" ? "btn-outline" : "btn-primary"}`}>
+            {data.product_level === "free" ? "Baixar" : "Ver Detalhes"}
+          </span>
+        </div>
+      </div>
+    </div>
+  </a>
+</article>
+
+<style>
+  .product-card {
+    @apply relative rounded-lg overflow-hidden transition-all duration-200;
+    background-color: rgb(var(--card-bg));
+    border: 1px solid rgb(var(--card-border));
+    color: rgb(var(--card-fg));
+    box-shadow: 0 12px 30px -24px rgb(var(--shadow-color) / 0.6);
+  }
+  
+  .product-card:hover {
+    border-color: rgb(var(--color-primary) / 0.3);
+    transform: translateY(-3px);
+  }
+  
+  .product-card__image {
+    @apply relative;
+  }
+
+  .product-card__media {
+    background-color: rgb(var(--muted-bg));
+  }
+  
+  .product-card__content {
+    @apply p-5 space-y-3;
+  }
+  
+  .product-card__title {
+    @apply text-lg font-bold transition-colors;
+    color: rgb(var(--card-fg));
+  }
+
+  .product-card:hover .product-card__title {
+    color: rgb(var(--color-primary));
+  }
+  
+  .product-card__description {
+    @apply text-sm line-clamp-2;
+    color: rgb(var(--muted-fg));
+  }
+  
+  .product-card__footer {
+    @apply flex items-center justify-between pt-3;
+    border-top: 1px solid rgb(var(--card-border));
+  }
+
+  .product-card__price-text {
+    color: rgb(var(--card-fg));
+  }
+</style>

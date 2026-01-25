@@ -1,0 +1,123 @@
+---
+/**
+ * Blog Post Pages with i18n Support
+ * 
+ * This file handles individual blog post pages
+ * with full internationalization support.
+ */
+import { getArchiveNav } from "@util/helpers";
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import Breadcrumb from "@components/navigation/Breadcrumb.astro";
+import ItemNav from "@components/navigation/ItemNav.astro";
+import PageLayout from "@layouts/PageLayout.astro";
+import { t, SUPPORTED_LOCALES, type SupportedLocale } from "@util/translate";
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection("blog");
+  
+  const paths = [];
+  
+  for (const locale of SUPPORTED_LOCALES) {
+    // Filter and sort posts for this locale
+    const localePosts = allPosts
+      .filter((post) => post.slug.startsWith(`${locale}/`))
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+    
+    const count = localePosts.length;
+    
+    localePosts.forEach((post, index) => {
+      let next: CollectionEntry<"blog"> | null = null;
+      let prev: CollectionEntry<"blog"> | null = null;
+      const archiveNav = getArchiveNav(count, index, localePosts);
+      next = archiveNav.next;
+      prev = archiveNav.prev;
+
+      // Remove the locale prefix from the slug for the URL
+      const slugWithoutLocale = post.slug.replace(`${locale}/`, '');
+
+      paths.push({
+        params: { 
+          lang: locale,
+          slug: slugWithoutLocale 
+        },
+        props: {
+          ...post,
+          lang: locale,
+          data: {
+            ...post.data,
+            nav: {
+              next: next ? {
+                slug: next.slug.replace(`${locale}/`, ''),
+                data: {
+                  title: next?.data?.title,
+                  thumbnail: next?.data?.thumbnail,
+                  pubDate: next?.data?.pubDate,
+                  intro: next?.data?.intro,
+                },
+              } : null,
+              prev: prev ? {
+                slug: prev.slug.replace(`${locale}/`, ''),
+                data: {
+                  title: prev?.data?.title,
+                  thumbnail: prev?.data?.thumbnail,
+                  pubDate: prev?.data?.pubDate,
+                  intro: prev?.data?.intro,
+                },
+              } : null,
+              index: index,
+            },
+          },
+        },
+      });
+    });
+  }
+  
+  return paths;
+}
+
+interface Props extends CollectionEntry<"blog"> {
+  lang: SupportedLocale;
+}
+
+const { lang } = Astro.params;
+const currentLang = lang as SupportedLocale;
+
+// Localized base URL for blog
+const base_url = `/${currentLang}/${import.meta.env.BLOG_SLUG || "news"}`;
+
+const post = Astro.props;
+const { Content } = await post.render();
+
+let searchFilters = [`${t("content", currentLang)}:${base_url}`];
+if (post?.data?.tag) {
+  const searchTags = post.data.tag.map((tag) => `${t("tag", currentLang)}:${tag}`);
+  searchFilters = [...searchFilters, ...searchTags];
+}
+
+const filter = post.data?.tag
+  ? {
+      name: post.data.tag[0],
+      type: "tag",
+    }
+  : null;
+---
+
+<PageLayout
+  {...post.data}
+  base_url={base_url}
+  lang={currentLang}
+  style={{
+    ...post.data.style,
+    container: "sm",
+    nav_color: "original",
+  }}
+>
+  <Breadcrumb title={post.data.title} filter={filter} lang={currentLang} slot="hero" />
+  <div class="richtext pb-10">
+    <Content />
+  </div>
+  <div class="pb-20" slot="nav">
+    <ItemNav nav={post.data.nav} base_url={base_url} lang={currentLang} />
+  </div>
+</PageLayout>

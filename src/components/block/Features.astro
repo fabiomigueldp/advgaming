@@ -1,0 +1,128 @@
+---
+import { marked } from "marked";
+import { Icon } from "astro-icon/components";
+import { getIconName } from "@util/helpers";
+const { content, features, style, id } = Astro.props;
+
+// Mark first two features as "popular" for visual emphasis
+const popularIndexes = [0, 5];
+---
+
+<div
+  {id}
+  class={`container-${style.container} fade-up rounded-md features grid gap-8`}
+>
+  {content && <div set:html={marked.parse(content)} class="richtext fade-up text-center" />}
+
+  {
+    features && (
+      <ul class="features-grid">
+        {features.map((feature, index) => (
+          <li
+            class={`feature-card fade-up ${popularIndexes.includes(index) ? 'popular' : ''}`}
+            style={`--animation-delay: ${(index + 1) * 100}ms`}
+          >
+            {popularIndexes.includes(index) && (
+              <span class="badge badge-popular">Popular</span>
+            )}
+            
+            <div class="feature-icon-wrap">
+              {feature.icon && (
+                <div
+                  class={`feature-icon ${
+                    feature.color || "surface-primary"
+                  }`}
+                >
+                  <Icon name={getIconName(feature.icon)} class="h-6 w-6" />
+                </div>
+              )}
+            </div>
+
+            <h3 class="feature-title">{feature.title}</h3>
+
+            {feature.content && (
+              <div
+                set:html={marked.parse(feature.content)}
+                class="feature-content richtext no-lead"
+              />
+            )}
+            
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</div>
+
+<style lang="postcss">
+  .features {
+    @apply relative;
+  }
+
+  .features-grid {
+    @apply grid gap-6 my-10;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    
+    @screen lg {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .feature-card {
+    @apply relative flex flex-col p-6 rounded-2xl overflow-hidden;
+    background-color: rgb(var(--card-bg));
+    border: 1px solid rgb(var(--card-border));
+    color: rgb(var(--card-fg));
+    box-shadow: 0 12px 30px -24px rgb(var(--shadow-color) / 0.6);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      border-color: rgb(var(--color-primary) / 0.3);
+      box-shadow: 0 16px 34px -26px rgb(var(--shadow-color) / 0.6);
+    }
+
+    &.popular {
+      border-color: rgb(var(--color-primary) / 0.35);
+      
+      &::before {
+        content: "";
+        @apply absolute inset-0 pointer-events-none;
+        background: linear-gradient(
+          135deg,
+          rgb(var(--color-primary) / 0.08) 0%,
+          transparent 60%
+        );
+      }
+    }
+  }
+
+  .badge {
+    @apply absolute top-4 right-4;
+  }
+
+  .feature-icon-wrap {
+    @apply mb-4;
+  }
+
+  .feature-icon {
+    @apply w-14 h-14 rounded-2xl grid place-items-center;
+    transition: transform 0.3s ease;
+    box-shadow: 0 10px 22px -18px rgb(var(--shadow-color) / 0.5);
+  }
+
+  .feature-title {
+    @apply text-xl font-bold tracking-tight mb-3;
+    font-variation-settings: var(--font-var-settings-headings);
+  }
+
+  .feature-content {
+    @apply text-sm opacity-80 leading-relaxed flex-1;
+    
+    :global(p) {
+      @apply m-0;
+    }
+  }
+
+</style>
+

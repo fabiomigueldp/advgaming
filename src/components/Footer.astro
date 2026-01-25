@@ -1,0 +1,135 @@
+---
+import { getEntry } from "astro:content";
+import { marked } from "marked";
+import { Icon } from "astro-icon/components";
+import { t, localizeUrl, getValidLocale, DEFAULT_LOCALE, type SupportedLocale } from "@util/translate";
+import Newsletter from "@components/form/NewsletterFooter.vue";
+
+// Get language from props or URL
+const { lang: propsLang } = Astro.props;
+const urlLang = Astro.url.pathname.split('/').filter(Boolean)[0];
+const lang = getValidLocale(propsLang || urlLang || DEFAULT_LOCALE);
+
+const today = new Date();
+
+// Try to load localized config, fall back to default
+const getLocalizedConfig = async (configName: string) => {
+  try {
+    const localizedEntry = await getEntry("config", `${lang}/${configName}`);
+    if (localizedEntry) return localizedEntry;
+  } catch (e) {
+    // Fall through to default
+  }
+  return await getEntry("config", configName);
+};
+
+let about = await getLocalizedConfig("about");
+let contact = await getLocalizedConfig("contact");
+let navigation = await getLocalizedConfig("navigation");
+
+const showNewsletter = !!import.meta.env.NEWSLETTER_PROVIDER;
+
+
+// Localize footer menu links
+const localizedFooterMenus = navigation.data.footer_menus?.map((menu) => ({
+  ...menu,
+  links: menu.links.map((link) => ({
+    ...link,
+    href: link.href.startsWith('http') || link.href.startsWith('#') 
+      ? link.href 
+      : localizeUrl(link.href, lang)
+  }))
+}));
+---
+
+<footer class="surface-footer">
+  <!-- Main Footer -->
+  <div class="container-xl py-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <!-- Brand Column -->
+      <div class="space-y-4">
+        <a href={localizeUrl('/', lang)} aria-label={t("back_to_home", lang)}>
+          <Icon name="logo-footer" class="h-8" />
+        </a>
+        
+        {about.data.footer_text && (
+          <div
+            class="text-sm text-neutral-400 max-w-xs"
+            set:html={marked.parse(about.data.footer_text)}
+          />
+        )}
+        
+        {contact.data.social && (
+          <div class="flex flex-wrap gap-2 pt-2">
+            {contact.data.social.map((link) => (
+              <a
+                href={link.href}
+                class="w-10 h-10 rounded-lg flex items-center justify-center transition-colors hover:bg-primary"
+                style="background-color: rgb(var(--muted-bg)); color: rgb(var(--card-fg));"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={link.label}
+              >
+                <Icon name={link.icon} class="h-5 w-5" />
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+      
+      <!-- Footer Menus -->
+      {localizedFooterMenus?.map((menu) => (
+        <div class="space-y-4">
+          <h4 class="text-sm font-semibold text-light">{menu.label}</h4>
+          <ul class="space-y-2">
+            {menu.links.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="text-sm text-neutral-400 hover:text-primary transition-colors"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      
+      <!-- Newsletter -->
+      {showNewsletter && (
+        <div class="space-y-4 lg:col-span-1">
+          <h4 class="text-sm font-semibold text-light">Newsletter</h4>
+          <div
+            class="text-sm text-neutral-400"
+            set:html={marked.parse(about.data.newsletter_text || '')}
+          />
+          <Newsletter client:visible />
+        </div>
+      )}
+    </div>
+  </div>
+  
+  <!-- Bottom Bar -->
+  <div class="border-t border-neutral-800">
+    <div class="container-xl py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2 text-xs text-neutral-500">
+        <span>&copy; {today.getFullYear()} {about.data.sitename}</span>
+        <span class="hidden sm:inline">|</span>
+        <span class="hidden sm:inline">Parte da Adventury Corporation</span>
+      </div>
+      
+      <!-- Attribution -->
+      <a
+        href="https://unfolding.io"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-xs text-neutral-600 hover:text-neutral-400 transition-colors"
+      >
+        powered by unfolding.io
+      </a>
+    </div>
+  </div>
+</footer>
+
+<slot />

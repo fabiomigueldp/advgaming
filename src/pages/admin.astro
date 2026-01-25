@@ -1,0 +1,134 @@
+---
+/* STATIC CMS ADMIN PAGE */
+import { 
+  settings, 
+  page_en, page_pt, page_es, page_fr,
+  post_en, post_pt, post_es, post_fr,
+  products_en, products_pt, products_es, products_fr
+} from "@cms/index.mjs";
+import logo from "@icons/logo.svg";
+import newsIcon from "@icons/news.svg";
+import pageIcon from "@icons/page.svg";
+import menuIcon from "@icons/menu.svg";
+import settingsIcon from "@icons/settings.svg";
+import portfolioIcon from "@icons/portfolio.svg";
+import shopIcon from "@icons/shop.svg";
+const cmsVersion = "v4.3.0";
+
+// Default CMS interface language
+const lang = "en";
+const url = Astro.site;
+
+const config = {
+  locale: lang,
+  site_url: url,
+  logo_url: "/logo-adventury.png",
+  local_backend: true,
+  backend: {
+    name: "test-repo",
+  },
+  search: true,
+  media_folder: "src/assets",
+  public_folder: "/src/assets",
+  media_library: {
+    max_file_size: 8012000,
+    folder_support: true,
+  },
+  // Collections organized by locale for easy content management
+  collections: [
+    // Products by locale (primary focus)
+    products_pt, products_en, products_es, products_fr,
+    // Pages by locale
+    page_pt, page_en, page_es, page_fr,
+    // Posts/Blog by locale
+    post_pt, post_en, post_es, post_fr,
+    // Global settings (not localized)
+    settings
+  ],
+};
+---
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adventury Gaming Admin | CMS</title>
+    <link
+      rel="stylesheet"
+      href={`https://unpkg.com/@staticcms/app@^${cmsVersion}/dist/main.css`}
+    />
+    <script
+      is:inline
+      type="text/javascript"
+      src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+    <style is:global>
+      #cms-root,
+      #nc-root,
+      body {
+        .flex.flex-col.min-h-full,
+        .w-editor-only.max-w-full {
+          padding-bottom: 10rem;
+        }
+
+        .MuiMenuButton-root {
+          background-color: #cccccc;
+        }
+
+        .flex.flex-col.min-h-full.w-full {
+          @apply pb-20;
+        }
+
+        .CMS_Button_contained-primary {
+          background-color: #0070f3 !important;
+        }
+
+        .CMS_Button_contained-success,
+        button.CMS_Button_contained-success {
+          background: green !important;
+        }
+
+        .CMS_Button_contained-error {
+          background: red !important;
+        }
+
+        [data-testid="expand-button"] label,
+        [data-testid="list-expand-button"] label {
+          font-size: 1rem !important;
+          text-transform: uppercase;
+        }
+
+        .MuiCollapse-wrapperInner > div {
+          border-bottom: 5px dotted rgba(59, 130, 246, 0.5);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <script
+      is:inline
+      src={`https://unpkg.com/@staticcms/app@^${cmsVersion}/dist/static-cms-app.js`}
+    ></script>
+    <script
+      is:inline
+      define:vars={{
+        config,
+        logo,
+        newsIcon,
+        pageIcon,
+        menuIcon,
+        settingsIcon,
+        portfolioIcon,
+        shopIcon,
+      }}
+    >
+      window.CMS.init({ config });
+
+      CMS.registerIcon("house", () => h("img", { src: logo.src }));
+      CMS.registerIcon("news", () => h("img", { src: newsIcon.src }));
+      CMS.registerIcon("page", () => h("img", { src: pageIcon.src }));
+      CMS.registerIcon("settings", () => h("img", { src: settingsIcon.src }));
+    </script>
+  </body>
+</html>

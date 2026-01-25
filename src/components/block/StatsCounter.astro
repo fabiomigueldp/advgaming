@@ -1,0 +1,128 @@
+---
+/**
+ * StatsCounter - Animated Statistics Section
+ * AAA quality animated counter section for showcasing key metrics
+ */
+import { marked } from "marked";
+
+interface Stat {
+  value: string;
+  label: string;
+  prefix?: string;
+  suffix?: string;
+}
+
+const { title, content, stats, style } = Astro.props;
+---
+
+<section
+  class={`stats-counter container-${style?.container || "lg"} ${style?.block_class || "py-20"}`}
+  id="stats"
+>
+  {content && (
+    <div set:html={marked.parse(content)} class="richtext text-center mb-12 fade-up" />
+  )}
+
+  <div class="stats-grid">
+    {stats?.map((stat: Stat, index: number) => (
+      <div
+        class="stat-card glass fade-up"
+        style={`--animation-delay: ${(index + 1) * 150}ms`}
+      >
+        <div class="stat-value">
+          <span class="stat-prefix">{stat.prefix || ""}</span>
+          <span class="stat-number" data-target={stat.value}>{stat.value}</span>
+          <span class="stat-suffix">{stat.suffix || ""}</span>
+        </div>
+        <div class="stat-label">{stat.label}</div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style lang="postcss">
+  .stats-counter {
+    @apply relative;
+  }
+
+  .stats-grid {
+    @apply grid gap-6;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    
+    @screen md {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .stat-card {
+    @apply relative overflow-hidden text-center p-8 rounded-2xl;
+    background-color: rgb(var(--card-bg));
+    border: 1px solid rgb(var(--card-border));
+    color: rgb(var(--card-fg));
+    box-shadow: 0 12px 30px -24px rgb(var(--shadow-color) / 0.6);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      border-color: rgb(var(--color-primary) / 0.35);
+    }
+  }
+
+  .stat-value {
+    @apply text-4xl md:text-5xl font-black tracking-tight mb-2;
+    color: rgb(var(--color-primary));
+  }
+
+  .stat-label {
+    @apply text-sm md:text-base uppercase tracking-widest opacity-70;
+    color: rgb(var(--muted-fg));
+  }
+</style>
+
+<script>
+  // Intersection Observer for animation trigger
+  const observerOptions = {
+    threshold: 0.5,
+    rootMargin: '0px'
+  };
+
+  const animateValue = (element: HTMLElement, start: number, end: number, duration: number) => {
+    const range = end - start;
+    const startTime = performance.now();
+    
+    const step = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeProgress = 1 - Math.pow(1 - progress, 3); // Ease out cubic
+      const current = Math.floor(start + range * easeProgress);
+      element.textContent = current.toString();
+      
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        element.textContent = end.toString();
+      }
+    };
+    
+    requestAnimationFrame(step);
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const statNumbers = entry.target.querySelectorAll('.stat-number');
+        statNumbers.forEach((el) => {
+          const target = parseInt((el as HTMLElement).dataset.target || '0', 10);
+          if (!isNaN(target)) {
+            animateValue(el as HTMLElement, 0, target, 2000);
+          }
+        });
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.stats-counter').forEach(section => {
+    observer.observe(section);
+  });
+</script>

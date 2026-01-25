@@ -1,0 +1,69 @@
+---
+/**
+ * Dynamic Page Router with i18n Support
+ * 
+ * This file handles all static pages from the content collection
+ * with full internationalization support.
+ */
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import PageLayoutFunnel from "@layouts/PageLayoutFunnel.astro";
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, type SupportedLocale } from "@util/translate";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("page");
+  
+  const paths: Array<{
+    params: { lang: string; slug: string | undefined };
+    props: CollectionEntry<"page"> & { lang: SupportedLocale };
+  }> = [];
+
+  for (const locale of SUPPORTED_LOCALES) {
+    // Filter posts for this locale
+    // Note: Astro treats index.mdx files specially - "en/index.mdx" has slug "en", not "en/index"
+    const localePosts = posts.filter((post) => post.slug.startsWith(`${locale}/`) || post.slug === locale);
+    
+    for (const post of localePosts) {
+      // Remove the locale prefix from the slug
+      // Handle both "en/page" format and "en" format (for index files where Astro strips "index")
+      const slugWithoutLocale = post.slug === locale 
+        ? 'index' 
+        : post.slug.replace(`${locale}/`, '');
+      
+      // For index pages (root of locale), slug should be undefined for rest params
+      // This generates /en/, /pt/, etc.
+      const slug = slugWithoutLocale === 'index' ? undefined : slugWithoutLocale;
+      
+      paths.push({
+        params: { 
+          lang: locale,
+          slug: slug
+        },
+        props: { 
+          ...post,
+          lang: locale
+        },
+      });
+    }
+  }
+
+  return paths;
+}
+
+interface Props extends CollectionEntry<"page"> {
+  lang: SupportedLocale;
+}
+
+const { lang } = Astro.params;
+const post = Astro.props;
+const { Content } = await post.render();
+
+// Pass the current language to the layout
+const currentLang = lang as SupportedLocale;
+---
+
+<PageLayoutFunnel {...post.data} lang={currentLang}>
+  <div class="richtext">
+    <Content />
+  </div>
+</PageLayoutFunnel>

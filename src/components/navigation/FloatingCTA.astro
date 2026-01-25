@@ -1,0 +1,174 @@
+---
+/**
+ * FloatingCTA - Sticky Contact Button
+ * Fixed position CTA that appears after scrolling past hero
+ */
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  href?: string;
+  label?: string;
+  icon?: string;
+  whatsapp?: string;
+}
+
+const { 
+  href = "#contact", 
+  label = "Contato", 
+  icon = "email",
+  whatsapp 
+} = Astro.props;
+
+const finalHref = whatsapp 
+  ? `https://wa.me/${whatsapp.replace(/\D/g, '')}` 
+  : href;
+---
+
+<div class="floating-cta" id="floating-cta">
+  <a 
+    href={finalHref}
+    class="cta-button"
+    target={whatsapp ? "_blank" : undefined}
+    rel={whatsapp ? "noopener noreferrer" : undefined}
+    aria-label={label}
+  >
+    <span class="cta-icon">
+      <Icon name={whatsapp ? "whatsapp" : icon} class="w-6 h-6" />
+    </span>
+    <span class="cta-label">{label}</span>
+    <span class="cta-pulse" />
+    <span class="cta-pulse delay" />
+  </a>
+</div>
+
+<style lang="postcss">
+  .floating-cta {
+    @apply fixed bottom-6 right-6 z-50;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.9);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .cta-button {
+    @apply relative flex items-center gap-3 px-5 py-4 rounded-full;
+    background-color: rgb(var(--card-bg));
+    color: rgb(var(--color-primary));
+    border: 2px solid rgb(var(--color-primary) / 0.3);
+    font-weight: 600;
+    box-shadow: 0 12px 24px -18px rgb(var(--shadow-color) / 0.8);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      border-color: rgb(var(--color-primary));
+      box-shadow: 0 16px 28px -18px rgb(var(--shadow-color) / 0.8);
+
+      .cta-label {
+        max-width: 150px;
+        opacity: 1;
+        margin-left: 0;
+      }
+
+      .cta-pulse {
+        animation-play-state: paused;
+      }
+    }
+  }
+
+  .cta-icon {
+    @apply relative z-10 flex items-center justify-center;
+  }
+
+  .cta-label {
+    @apply relative z-10 whitespace-nowrap overflow-hidden;
+    max-width: 0;
+    opacity: 0;
+    margin-left: -12px;
+    transition: all 0.3s ease;
+
+    @screen md {
+      max-width: 150px;
+      opacity: 1;
+      margin-left: 0;
+    }
+  }
+
+  .cta-pulse {
+    @apply absolute inset-0 rounded-full;
+    background: inherit;
+    animation: pulse 2s infinite;
+    z-index: 0;
+
+    &.delay {
+      animation-delay: 0.5s;
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.5;
+    }
+    70% {
+      transform: scale(1.3);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1.3);
+      opacity: 0;
+    }
+  }
+
+  /* WhatsApp specific styling */
+  .floating-cta:has([href*="wa.me"]) .cta-button {
+    background-color: #1faa59;
+    color: white;
+    border-color: #1faa59;
+    box-shadow: 0 12px 24px -18px rgba(31, 170, 89, 0.7);
+
+    &:hover {
+      border-color: #128c7e;
+      background-color: #128c7e;
+      box-shadow: 0 16px 28px -18px rgba(31, 170, 89, 0.7);
+    }
+  }
+</style>
+
+<script>
+  const floatingCta = document.getElementById('floating-cta');
+  const heroSection = document.getElementById('header');
+  
+  if (floatingCta && heroSection) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) {
+          floatingCta.classList.add('visible');
+        } else {
+          floatingCta.classList.remove('visible');
+        }
+      },
+      { threshold: 0.1 }
+    );
+    
+    observer.observe(heroSection);
+  } else if (floatingCta) {
+    // If no hero, show after scroll
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.scrollY;
+      if (currentScroll > 300) {
+        floatingCta.classList.add('visible');
+      } else {
+        floatingCta.classList.remove('visible');
+      }
+      lastScroll = currentScroll;
+    }, { passive: true });
+  }
+</script>

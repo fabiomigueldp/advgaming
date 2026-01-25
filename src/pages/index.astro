@@ -1,0 +1,38 @@
+---
+/**
+ * Root Index Page - Language Redirect
+ * 
+ * This page redirects users from the root path (/) to the appropriate
+ * localized version based on their Accept-Language header.
+ * 
+ * The actual redirect logic is handled by the middleware,
+ * but this page ensures the route exists for SSR.
+ */
+export const prerender = false;
+
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, type SupportedLocale } from '@util/translate';
+import parser from 'accept-language-parser';
+
+// Get the Accept-Language header and detect preferred locale
+const acceptLanguage = Astro.request.headers.get('accept-language');
+let preferredLocale: SupportedLocale = DEFAULT_LOCALE;
+
+if (acceptLanguage) {
+  const languages = parser.parse(acceptLanguage);
+  for (const lang of languages) {
+    const code = lang.code.toLowerCase();
+    if (SUPPORTED_LOCALES.includes(code as SupportedLocale)) {
+      preferredLocale = code as SupportedLocale;
+      break;
+    }
+    const baseCode = code.split('-')[0];
+    if (SUPPORTED_LOCALES.includes(baseCode as SupportedLocale)) {
+      preferredLocale = baseCode as SupportedLocale;
+      break;
+    }
+  }
+}
+
+// Redirect to the localized root
+return Astro.redirect(`/${preferredLocale}/`, 302);
+---

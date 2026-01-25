@@ -1,0 +1,266 @@
+---
+/**
+ * Products Listing Page
+ * Displays all products with filtering options
+ */
+import { getCollection } from "astro:content";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import ProductCard from "@components/cards/ProductCard.astro";
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, type SupportedLocale } from "@util/translate";
+
+export async function getStaticPaths() {
+  const paths = SUPPORTED_LOCALES.map((locale) => ({
+    params: { lang: locale },
+    props: { lang: locale }
+  }));
+  return paths;
+}
+
+interface Props {
+  lang: SupportedLocale;
+}
+
+const { lang } = Astro.props;
+
+// Get all products for current locale
+const allProducts = await getCollection("products");
+const products = allProducts
+  .filter((p) => p.slug.startsWith(`${lang}/`))
+  .sort((a, b) => a.data.sort_order - b.data.sort_order);
+
+const pageTitle = "Streamer Kits";
+const pageDescription = "Kits profissionais para streamers. Overlays, alertas, paineis e muito mais para suas transmissoes.";
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} lang={lang}>
+  <main class="surface-dark min-h-screen">
+    <!-- Hero Section -->
+    <section class="pt-32 pb-16">
+      <div class="container-xl">
+        <div class="max-w-3xl">
+          <h1 class="title mb-4" style="color: rgb(var(--fg));">Streamer Kits</h1>
+          <p class="text-xl" style="color: rgb(var(--muted-fg));">
+            Kits profissionais desenvolvidos por designers especializados.
+            Do gratuito ao avancado, temos o kit perfeito para sua stream.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters -->
+    <section class="pb-8">
+      <div class="container-xl">
+        <div class="flex flex-wrap gap-2" id="product-filters">
+          <button 
+            class="filter-btn active" 
+            data-filter="all"
+          >
+            Todos
+          </button>
+           <button
+             class="filter-btn"
+             data-filter="free"
+           >
+             Gratuito
+           </button>
+           <button
+             class="filter-btn"
+             data-filter="basic"
+           >
+             Básico
+           </button>
+           <button
+             class="filter-btn"
+             data-filter="intermediate"
+           >
+             Intermediário
+           </button>
+           <button
+             class="filter-btn"
+             data-filter="advanced"
+           >
+             Avançado
+           </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="pb-20">
+      <div class="container-xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="products-grid">
+          {products.map((product) => (
+            <div class="product-item" data-level={product.data.product_level}>
+              <ProductCard product={product} lang={lang} />
+            </div>
+          ))}
+        </div>
+        
+        {products.length === 0 && (
+          <div class="text-center py-20">
+            <p class="text-neutral-500 text-lg">Nenhum produto encontrado.</p>
+          </div>
+        )}
+      </div>
+    </section>
+
+    <!-- Comparison CTA -->
+    <section class="py-16" style="border-top: 1px solid rgb(var(--border));">
+      <div class="container-xl text-center">
+        <h2 class="text-2xl font-bold mb-4" style="color: rgb(var(--fg));">Nao sabe qual escolher?</h2>
+        <p class="mb-8 max-w-xl mx-auto" style="color: rgb(var(--muted-fg));">
+          Compare os recursos de cada kit e encontre o ideal para seu momento.
+        </p>
+        <a href="#comparison" class="btn btn-outline">
+          Comparar Kits
+        </a>
+      </div>
+    </section>
+
+    <!-- Comparison Table -->
+    <section class="py-16" id="comparison" style="background-color: rgb(var(--muted-bg));">
+      <div class="container-xl">
+        <h2 class="text-2xl font-bold mb-8 text-center" style="color: rgb(var(--fg));">Comparacao de Kits</h2>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead>
+              <tr style="border-bottom: 1px solid rgb(var(--border));">
+                <th class="py-4 px-4 font-medium" style="color: rgb(var(--muted-fg));">Recurso</th>
+                <th class="py-4 px-4 text-center" style="color: rgb(var(--color-success));">Free</th>
+                <th class="py-4 px-4 text-center" style="color: rgb(var(--color-info));">Basic</th>
+                <th class="py-4 px-4 text-center" style="color: rgb(var(--color-accent));">Intermediate</th>
+                <th class="py-4 px-4 text-center" style="color: rgb(var(--color-primary));">Advanced</th>
+              </tr>
+            </thead>
+            <tbody class="text-sm">
+              <tr style="border-bottom: 1px solid rgb(var(--border));">
+                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Overlays</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">4</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">7</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">10+</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">20+</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgb(var(--border));">
+                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Alertas</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">2</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">5</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">10+</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">15+</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgb(var(--border));">
+                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Paineis</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">5</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">10</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">15</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgb(var(--border));">
+                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Transicoes</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">2</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">4</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">8</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgb(var(--border));">
+                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Widgets</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">5</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">10+</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgb(var(--border));">
+                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Emotes</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Basico</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">20</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgb(var(--border));">
+                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Variacoes de cor</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">1</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">1</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">3</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">6</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgb(var(--border));">
+                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Suporte</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">30 dias</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">60 dias</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">90 dias VIP</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgb(var(--border));">
+                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Setup guiado</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--color-success)); font-weight: 600;">Incluso</td>
+              </tr>
+              <tr>
+                <td class="py-4 px-4 font-bold" style="color: rgb(var(--fg));">Preco</td>
+                <td class="py-4 px-4 text-center font-bold" style="color: rgb(var(--color-success));">Gratis</td>
+                <td class="py-4 px-4 text-center font-bold" style="color: rgb(var(--color-info));">R$ 49,90</td>
+                <td class="py-4 px-4 text-center font-bold" style="color: rgb(var(--color-accent));">R$ 99,90</td>
+                <td class="py-4 px-4 text-center font-bold" style="color: rgb(var(--color-primary));">R$ 199,90</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .filter-btn {
+    @apply px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200;
+    background-color: rgb(var(--muted-bg));
+    color: rgb(var(--muted-fg));
+  }
+
+  .filter-btn:hover {
+    background-color: rgb(var(--border));
+    color: rgb(var(--fg));
+  }
+
+  .filter-btn.active {
+    background-color: rgb(var(--color-primary));
+    color: rgb(var(--primary-fg));
+  }
+  
+  .product-item {
+    @apply transition-opacity duration-300;
+  }
+  
+  .product-item.is-hidden {
+    display: none;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const productItems = document.querySelectorAll('.product-item');
+    
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.getAttribute('data-filter');
+        
+        // Update active button
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Filter products
+        productItems.forEach(item => {
+          const level = item.getAttribute('data-level');
+          if (filter === 'all' || level === filter) {
+            item.classList.remove('is-hidden');
+          } else {
+            item.classList.add('is-hidden');
+          }
+        });
+      });
+    });
+  });
+</script>

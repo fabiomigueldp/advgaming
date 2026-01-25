@@ -1,0 +1,62 @@
+---
+/**
+ * Checkout Canceled Page
+ * Displayed when user cancels Stripe checkout
+ */
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { Icon } from "astro-icon/components";
+import { SUPPORTED_LOCALES, localizeUrl, type SupportedLocale } from "@util/translate";
+
+export async function getStaticPaths() {
+  return SUPPORTED_LOCALES.map((locale) => ({
+    params: { lang: locale },
+    props: { lang: locale }
+  }));
+}
+
+interface Props {
+  lang: SupportedLocale;
+}
+
+const { lang } = Astro.props;
+
+const pageTitle = "Checkout Cancelado";
+const pageDescription = "O processo de pagamento foi cancelado.";
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} lang={lang}>
+  <main class="surface-dark min-h-screen">
+    <section class="pt-32 pb-20">
+      <div class="container-md text-center">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-neutral-800 rounded-full mb-8">
+          <Icon name="close-o" class="w-12 h-12 text-neutral-500" />
+        </div>
+        
+        <h1 class="title-md text-light mb-4">Checkout Cancelado</h1>
+        
+        <p class="text-xl text-neutral-300 mb-8 max-w-xl mx-auto">
+          Voce cancelou o processo de pagamento. Nenhuma cobranca foi realizada.
+        </p>
+        
+        <div class="bg-neutral-900/50 rounded-lg p-6 max-w-md mx-auto mb-8">
+          <p class="text-neutral-400 text-sm">
+            Seus itens ainda estao disponiveis. Voce pode voltar e finalizar a compra a qualquer momento.
+          </p>
+        </div>
+        
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href={localizeUrl('/products', lang)} class="btn btn-primary">
+            Voltar aos Produtos
+          </a>
+          <a href={localizeUrl('/support', lang)} class="btn btn-ghost">
+            Precisa de ajuda?
+          </a>
+        </div>
+        
+        <p class="text-neutral-500 text-sm mt-8">
+          Duvidas sobre precos ou pagamento? Confira nosso <a href={localizeUrl('/support', lang)} class="text-primary hover:underline">FAQ</a>.
+        </p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

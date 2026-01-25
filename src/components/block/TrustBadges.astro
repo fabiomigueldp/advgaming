@@ -1,0 +1,157 @@
+---
+/**
+ * TrustBadges - Technology & Trust Signals
+ * Display technology stack logos and trust badges
+ */
+import Picture from "@components/media/Picture.astro";
+import { Icon } from "astro-icon/components";
+
+interface Badge {
+  name: string;
+  icon?: string;
+  image?: string;
+}
+
+const { title, content, badges, style } = Astro.props;
+
+const defaultBadges: Badge[] = [
+  { name: "Astro", icon: "astro" },
+  { name: "React", icon: "react" },
+  { name: "Vue", icon: "vue" },
+  { name: "Node.js", icon: "nodejs" },
+  { name: "TypeScript", icon: "typescript" },
+  { name: "TailwindCSS", icon: "tailwind" },
+];
+
+const displayBadges = badges && badges.length > 0 ? badges : defaultBadges;
+---
+
+<section
+  class={`trust-badges container-${style?.container || "xl"} ${style?.block_class || "py-16"}`}
+  id="trusted-by"
+>
+  {title && (
+    <h3 class="trust-badges__title text-center mb-8 fade-up">
+      {title}
+    </h3>
+  )}
+
+  <div class="badges-track">
+    <div class="badges-scroll">
+      {[...displayBadges, ...displayBadges].map((badge: Badge, index: number) => (
+        <div class="badge-item" title={badge.name}>
+          {badge.icon ? (
+            <Icon name={badge.icon} class="badge-icon" />
+          ) : badge.image ? (
+            <img src={badge.image} alt={badge.name} class="badge-image" />
+          ) : (
+            <span class="badge-text">{badge.name}</span>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="corporation-badge fade-up">
+    <div class="badge-content">
+      <span class="badge-title">Part of</span>
+      <span class="badge-company">Adventury Corporation</span>
+    </div>
+  </div>
+</section>
+
+<style lang="postcss">
+  .trust-badges {
+    @apply relative overflow-hidden;
+  }
+
+  .trust-badges__title {
+    @apply text-sm uppercase tracking-widest;
+    color: rgb(var(--muted-fg));
+  }
+
+  .badges-track {
+    @apply relative overflow-hidden;
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 10%,
+      black 90%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 10%,
+      black 90%,
+      transparent 100%
+    );
+  }
+
+  .badges-scroll {
+    @apply flex items-center gap-12 py-6;
+    animation: scroll 40s linear infinite;
+    width: max-content;
+
+    &:hover {
+      animation-play-state: paused;
+    }
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .badge-item {
+    @apply flex items-center justify-center px-6 py-4 shrink-0;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+
+    &:hover {
+      opacity: 0.95;
+      transform: scale(1.04);
+    }
+  }
+
+  .badge-icon {
+    @apply w-10 h-10 md:w-12 md:h-12;
+  }
+
+  .badge-image {
+    @apply h-8 md:h-10 w-auto grayscale;
+    transition: filter 0.3s ease;
+
+    .badge-item:hover & {
+      filter: grayscale(0);
+    }
+  }
+
+  .badge-text {
+    @apply text-xl font-bold tracking-tight;
+  }
+
+  .corporation-badge {
+    @apply flex justify-center mt-8;
+  }
+
+  .badge-content {
+    @apply inline-flex flex-col items-center px-8 py-4 rounded-full;
+    background-color: rgb(var(--muted-bg));
+    border: 1px solid rgb(var(--card-border));
+    color: rgb(var(--card-fg));
+  }
+
+  .badge-title {
+    @apply text-xs uppercase tracking-widest opacity-60;
+  }
+
+  .badge-company {
+    @apply text-lg font-bold tracking-tight;
+    color: rgb(var(--color-primary));
+  }
+</style>
