@@ -1,5 +1,6 @@
 ---
 import { getImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
 let {
   src,
   aspect,
@@ -16,8 +17,14 @@ let {
   layout = "fill",
 } = Astro.props;
 
-const allImages = import.meta.glob("/src/assets/*.{jpeg,jpg,png,gif,webp}");
-const imgObj = (await allImages[src]()).default;
+const allImages = import.meta.glob(
+  "/src/assets/**/*.{jpeg,jpg,png,gif,webp}"
+);
+const imgModule = (await allImages[src]?.()) as unknown as { default: ImageMetadata } | undefined;
+const imgObj = imgModule?.default;
+if (!imgObj) {
+  throw new Error(`Image not found: ${src}`);
+}
 if (aspect) height = Math.round(width / aspect);
 const image = await getImage({
   src: imgObj,

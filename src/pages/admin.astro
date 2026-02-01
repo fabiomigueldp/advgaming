@@ -4,7 +4,8 @@ import {
   settings, 
   page_en, page_pt, page_es, page_fr,
   post_en, post_pt, post_es, post_fr,
-  products_en, products_pt, products_es, products_fr
+  products_en, products_pt, products_es, products_fr,
+  partners_pt
 } from "@cms/index.mjs";
 import logo from "@icons/logo.svg";
 import newsIcon from "@icons/news.svg";
@@ -38,6 +39,8 @@ const config = {
   collections: [
     // Products by locale (primary focus)
     products_pt, products_en, products_es, products_fr,
+    // Squad partners
+    partners_pt,
     // Pages by locale
     page_pt, page_en, page_es, page_fr,
     // Posts/Blog by locale

@@ -1,0 +1,39 @@
+---
+import Picture from "@components/media/Picture.astro";
+
+const { items, getProductUrl } = Astro.props;
+---
+
+<section class="get-look" id="look">
+  <div class="container-xl">
+    <div class="get-look__header">
+      <p class="get-look__eyebrow">Get the Look</p>
+      <h2 class="get-look__title">Veja nossos kits em acao</h2>
+      <p class="get-look__intro">
+        Screens reais dos parceiros usando overlays, alertas e paineis Adventury.
+      </p>
+    </div>
+
+    <div class="get-look__grid">
+      {items.map((item) => (
+        <a class="get-look__card" href={item.productUrl || "#"}>
+          <div class="get-look__media">
+            <Picture
+              src={item.image}
+              alt={item.title}
+              sizes="(min-width: 1024px) 400px, 90vw"
+              aspect={16 / 9}
+              layout="fullWidth"
+            />
+            <div class="get-look__overlay">
+              <div class="get-look__meta">
+                <span class="get-look__kit">{item.title}</span>
+                {item.price && <span class="get-look__price">{item.price}</span>}
+              </div>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

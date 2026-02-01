@@ -1,0 +1,55 @@
+---
+import { Icon } from "astro-icon/components";
+import Picture from "@components/media/Picture.astro";
+
+const {
+  partner,
+  product,
+  productUrl,
+  platformIcon,
+} = Astro.props;
+
+const name = partner.data.name;
+const role = partner.data.role;
+const cutout = partner.data.cutout || partner.data.avatar;
+const handle = partner.data.handle;
+const setupLabel = product ? `Setup Utilizado: ${product.data.name}` : "Ver Kit Utilizado";
+---
+
+<article class="legend-card">
+  <div class="legend-card__surface">
+    <div class="legend-card__meta">
+      <div class="legend-card__platform">
+        <Icon name={platformIcon} class="legend-card__platform-icon" />
+        <span>{partner.data.platform}</span>
+      </div>
+      <h3 class="legend-card__name">{name}</h3>
+      {handle && <p class="legend-card__handle">{handle}</p>}
+      {role && <p class="legend-card__role">{role}</p>}
+      <div class="legend-card__actions">
+        <a
+          class="btn btn-secondary btn-sm"
+          href={partner.data.channel_url}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Ver canal
+        </a>
+        {productUrl && (
+          <a class="legend-card__kit" href={productUrl}>
+            {setupLabel}
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+  <div class="legend-card__cutout" aria-hidden="true">
+    <Picture
+      src={cutout}
+      alt={name}
+      sizes="(min-width: 1024px) 420px, 70vw"
+      aspect={4 / 5}
+      layout="fullWidth"
+    />
+  </div>
+</article>

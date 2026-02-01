@@ -1,0 +1,716 @@
+---
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, localizeUrl, type SupportedLocale } from "@util/translate";
+import SquadHero from "@components/partners/SquadHero.astro";
+import LegendCard from "@components/partners/LegendCard.astro";
+import RosterCard from "@components/partners/RosterCard.astro";
+import GetTheLook from "@components/partners/GetTheLook.astro";
+import RecruitmentCTA from "@components/partners/RecruitmentCTA.astro";
+
+export async function getStaticPaths() {
+  return SUPPORTED_LOCALES.map((locale) => ({
+    params: { lang: locale },
+    props: { lang: locale },
+  }));
+}
+
+const { lang } = Astro.props as { lang: SupportedLocale };
+const currentLang = lang || DEFAULT_LOCALE;
+
+const allPartners = (await (getCollection as any)("partners")) as any[];
+const partners = (allPartners as any[])
+  .filter((partner) => ((partner as any)["slug"] || "").startsWith(`${currentLang}/`))
+  .sort((a, b) => ((a as any)?.data?.sort_order || 0) - ((b as any)?.data?.sort_order || 0));
+
+const allProducts = await getCollection("products");
+const products = allProducts.filter((product) => product.slug.startsWith(`${currentLang}/`));
+const productMap = new Map(products.map((product) => [product.slug, product]));
+
+const getRefSlug = (ref) => {
+  if (!ref) return null;
+  if (typeof ref === "string") return ref;
+  if (typeof ref === "object" && "slug" in ref) return ref.slug;
+  return null;
+};
+
+const getProductUrl = (productEntry) => {
+  if (!productEntry) return null;
+  const slug = productEntry.slug.split("/").pop();
+  return localizeUrl(`/products/${slug}`, currentLang);
+};
+
+const platformIcons: Record<string, string> = {
+  twitch: "twitch",
+  youtube: "youtube",
+  kick: "play",
+  tiktok: "tiktok",
+  facebook: "facebook",
+  other: "share",
+};
+
+const partnerList = partners as any[];
+const legends = partnerList.filter((partner) => partner.data.level === "legend");
+const roster = partnerList.filter((partner) => partner.data.level !== "legend");
+
+const showcaseItems = partnerList
+  .flatMap((partner) => {
+    if (partner.data.showcase && partner.data.showcase.length > 0) {
+      return partner.data.showcase.map((item) => ({
+        image: item.image,
+        productRef: item.product,
+      }));
+    }
+    if (partner.data.screenshot) {
+      return [{ image: partner.data.screenshot, productRef: partner.data.product }];
+    }
+    return [];
+  })
+  .slice(0, 8)
+  .map((item, index) => {
+    const slug = getRefSlug(item.productRef);
+    const product = slug ? productMap.get(slug) : null;
+    return {
+      id: `${slug || "item"}-${index}`,
+      image: item.image,
+      title: product?.data?.name || "Kit em destaque",
+      price: product?.data?.price_display || null,
+      productUrl: product ? getProductUrl(product) : null,
+    };
+  });
+
+const pageTitle = "O Squad | Adventury Gaming";
+const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas lives com os kits Adventury Gaming.";
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} page_class="squad-page" nav_color="on-dark" lang={currentLang}>
+  <main class="squad-main">
+    <SquadHero
+      title="Streamers que definem o jogo"
+      intro="A elite que equipa suas lives com os kits Adventury Gaming. Prova social, comunidade e performance em um unico esquadrao."
+      cta_label="Junte-se ao Squad"
+      cta_href="#recruitment"
+      secondary_label="Ver o roster"
+      secondary_href="#roster"
+    />
+
+    <section class="squad-section" id="legends">
+      <div class="container-xl squad-section__header">
+        <p class="squad-eyebrow">The Legends</p>
+        <h2 class="squad-title">Destaques que definem o meta</h2>
+        <p class="squad-subtitle">
+          A elite da criacao de conteudo que domina o setup e dita tendencia.
+        </p>
+      </div>
+
+      {legends.length > 0 ? (
+        <div class="legend-carousel" data-carousel-scope>
+          <div class="legend-carousel__track" data-carousel-track>
+            {legends.map((partner) => {
+              const productSlug = getRefSlug(partner.data.product);
+              const product = productSlug ? productMap.get(productSlug) : null;
+              const productUrl = product ? getProductUrl(product) : null;
+              const platformIcon = platformIcons[partner.data.platform] || "share";
+              return (
+                <LegendCard
+                  partner={partner}
+                  product={product}
+                  productUrl={productUrl}
+                  platformIcon={platformIcon}
+                />
+              );
+            })}
+          </div>
+          <div class="legend-carousel__controls">
+            <button class="legend-carousel__btn" data-carousel-prev aria-label="Anterior">
+              <span aria-hidden="true">‹</span>
+            </button>
+            <button class="legend-carousel__btn" data-carousel-next aria-label="Proximo">
+              <span aria-hidden="true">›</span>
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div class="container-xl squad-empty">
+          <p>Nenhum legend ativo no momento. Quer entrar para o hall?</p>
+        </div>
+      )}
+    </section>
+
+    <section class="squad-section" id="roster">
+      <div class="container-xl squad-section__header">
+        <p class="squad-eyebrow">The Roster</p>
+        <h2 class="squad-title">O time completo do Squad</h2>
+        <p class="squad-subtitle">
+          Criadores em ascensao, parceiros oficiais e afiliados que usam nossos kits.
+        </p>
+      </div>
+
+      {roster.length > 0 ? (
+        <div class="container-xl roster-grid">
+          {roster.map((partner) => {
+            const productSlug = getRefSlug(partner.data.product);
+            const product = productSlug ? productMap.get(productSlug) : null;
+            const productUrl = product ? getProductUrl(product) : null;
+            const platformIcon = platformIcons[partner.data.platform] || "share";
+            return (
+              <RosterCard
+                partner={partner}
+                product={product}
+                productUrl={productUrl}
+                platformIcon={platformIcon}
+              />
+            );
+          })}
+        </div>
+      ) : (
+        <div class="container-xl squad-empty">
+          <p>O roster esta em formacao. Seja o proximo.</p>
+        </div>
+      )}
+    </section>
+
+    {showcaseItems.length > 0 && <GetTheLook items={showcaseItems} />}
+
+    <RecruitmentCTA cta_href="#contact" />
+  </main>
+</BaseLayout>
+
+<script>
+  const scopes = document.querySelectorAll("[data-carousel-scope]");
+  scopes.forEach((scope) => {
+    const track = scope.querySelector("[data-carousel-track]");
+    const prev = scope.querySelector("[data-carousel-prev]");
+    const next = scope.querySelector("[data-carousel-next]");
+    if (!track || !prev || !next) return;
+
+    const scrollBy = () => Math.max(track.clientWidth * 0.8, 300);
+
+    prev.addEventListener("click", () => {
+      track.scrollBy({ left: -scrollBy(), behavior: "smooth" });
+    });
+
+    next.addEventListener("click", () => {
+      track.scrollBy({ left: scrollBy(), behavior: "smooth" });
+    });
+  });
+</script>
+
+<style lang="postcss" is:global>
+  .squad-page {
+    --bg: 6 6 9;
+    --fg: 245 245 245;
+    --muted-bg: 16 16 22;
+    --muted-fg: 163 163 170;
+    --card-bg: 12 12 18;
+    --card-fg: 242 242 244;
+    --card-border: 38 38 45;
+    --border: 38 38 45;
+    --shadow-color: 0 0 0;
+    background-color: rgb(var(--bg));
+    color: rgb(var(--fg));
+  }
+
+  [data-theme="light"] .squad-page {
+    --bg: 6 6 9;
+    --fg: 245 245 245;
+    --muted-bg: 16 16 22;
+    --muted-fg: 163 163 170;
+    --card-bg: 12 12 18;
+    --card-fg: 242 242 244;
+    --card-border: 38 38 45;
+    --border: 38 38 45;
+  }
+
+  .squad-main {
+    background-color: rgb(var(--bg));
+  }
+
+  .squad-hero {
+    position: relative;
+    min-height: 85vh;
+    display: grid;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .squad-hero__media {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .squad-hero__video,
+  .squad-hero__poster picture,
+  .squad-hero__poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .squad-hero__poster {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+  }
+
+  .squad-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(6, 6, 9, 0.85) 0%, rgba(6, 6, 9, 0.4) 50%, rgba(6, 6, 9, 0.85) 100%);
+  }
+
+  .squad-hero__mesh {
+    position: absolute;
+    inset: -20% -10% auto -10%;
+    height: 70%;
+    background: radial-gradient(45% 70% at 50% 20%, rgba(220, 38, 38, 0.35) 0%, rgba(220, 38, 38, 0) 70%);
+    filter: blur(20px);
+  }
+
+  .squad-hero__content {
+    position: relative;
+    z-index: 2;
+    padding: 8rem 0 6rem;
+    display: grid;
+    gap: 1.5rem;
+    max-width: 48rem;
+  }
+
+  .squad-hero__eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    font-size: 0.75rem;
+    color: rgb(var(--muted-fg));
+  }
+
+  .squad-hero__title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    text-transform: uppercase;
+    font-variation-settings: "wght" 900, "opsz" 9;
+  }
+
+  .squad-hero__intro {
+    color: rgb(var(--muted-fg));
+    font-size: 1.1rem;
+    max-width: 38rem;
+  }
+
+  .squad-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .squad-hero__video {
+      display: none;
+    }
+    .squad-hero__poster {
+      opacity: 1;
+    }
+  }
+
+  .squad-section {
+    padding: 5rem 0;
+    position: relative;
+  }
+
+  .squad-section__header {
+    display: grid;
+    gap: 0.75rem;
+    padding-bottom: 2rem;
+  }
+
+  .squad-eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    font-size: 0.7rem;
+    color: rgb(var(--muted-fg));
+  }
+
+  .squad-title {
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    font-variation-settings: "wght" 900, "opsz" 9;
+    text-transform: uppercase;
+  }
+
+  .squad-subtitle {
+    color: rgb(var(--muted-fg));
+    max-width: 40rem;
+  }
+
+  .legend-carousel {
+    position: relative;
+  }
+
+  .legend-carousel__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(16rem, 28rem);
+    gap: 2rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 0 2rem 1rem;
+  }
+
+  .legend-carousel__track > * {
+    scroll-snap-align: start;
+  }
+
+  .legend-carousel__controls {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    padding: 1rem 2rem 0;
+  }
+
+  .legend-carousel__btn {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    border: 1px solid rgb(var(--card-border));
+    color: rgb(var(--fg));
+    background: rgba(15, 15, 20, 0.8);
+    transition: all 0.2s ease;
+  }
+
+  .legend-carousel__btn:hover {
+    border-color: rgb(var(--color-primary) / 0.6);
+    box-shadow: 0 0 24px rgba(220, 38, 38, 0.35);
+  }
+
+  .legend-card {
+    position: relative;
+    display: grid;
+  }
+
+  .legend-card__surface {
+    position: relative;
+    background: linear-gradient(160deg, rgba(18, 18, 24, 0.95), rgba(8, 8, 10, 0.9));
+    border: 1px solid rgb(var(--card-border));
+    border-radius: 1.5rem;
+    padding: 2rem;
+    display: grid;
+    gap: 1.5rem;
+    overflow: hidden;
+    min-height: 24rem;
+  }
+
+  .legend-card__surface::after {
+    content: "";
+    position: absolute;
+    inset: 40% -20% -30% auto;
+    width: 60%;
+    background: radial-gradient(circle, rgba(220, 38, 38, 0.35) 0%, rgba(220, 38, 38, 0) 70%);
+    filter: blur(30px);
+  }
+
+  .legend-card__cutout {
+    position: absolute;
+    right: 1.5rem;
+    bottom: 0;
+    width: min(60%, 18rem);
+    transform: translateY(10%);
+    pointer-events: none;
+  }
+
+  .legend-card__meta {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: 0.4rem;
+    max-width: 60%;
+  }
+
+  .legend-card__platform {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: rgb(var(--muted-fg));
+  }
+
+  .legend-card__platform-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .legend-card__name {
+    font-size: 1.6rem;
+    font-variation-settings: "wght" 900, "opsz" 9;
+  }
+
+  .legend-card__handle {
+    color: rgb(var(--color-primary));
+    font-weight: 600;
+  }
+
+  .legend-card__role {
+    color: rgb(var(--muted-fg));
+  }
+
+  .legend-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .legend-card__kit {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgb(var(--color-primary));
+  }
+
+  .roster-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .roster-card {
+    border: 1px solid rgb(var(--card-border));
+    border-radius: 1.25rem;
+    background: rgba(12, 12, 18, 0.9);
+    overflow: hidden;
+    display: grid;
+    gap: 0.75rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .roster-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 28px rgba(220, 38, 38, 0.35);
+    border-color: rgb(var(--color-primary) / 0.6);
+  }
+
+  .roster-card__media {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .roster-card__media img {
+    transition: transform 0.4s ease;
+  }
+
+  .roster-card:hover .roster-card__media img {
+    transform: scale(1.05);
+  }
+
+  .roster-card__glow {
+    position: absolute;
+    inset: 0;
+    border: 1px solid transparent;
+    background: radial-gradient(circle at top, rgba(220, 38, 38, 0.2), transparent 60%);
+  }
+
+  .roster-card__body {
+    padding: 1.2rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .roster-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: rgb(var(--muted-fg));
+  }
+
+  .roster-card__platform {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .roster-card__platform-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .roster-card__name {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .roster-card__handle {
+    color: rgb(var(--color-primary));
+    font-size: 0.9rem;
+  }
+
+  .roster-card__role {
+    color: rgb(var(--muted-fg));
+    font-size: 0.85rem;
+  }
+
+  .roster-card__kit {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgb(var(--color-primary));
+    margin-top: 0.4rem;
+  }
+
+  .roster-card__channel {
+    color: rgb(var(--color-primary));
+  }
+
+  .get-look {
+    padding: 5rem 0;
+    background: linear-gradient(180deg, rgba(12, 12, 18, 0.6) 0%, rgba(6, 6, 9, 1) 100%);
+  }
+
+  .get-look__header {
+    display: grid;
+    gap: 0.6rem;
+    padding-bottom: 2rem;
+  }
+
+  .get-look__eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    font-size: 0.7rem;
+    color: rgb(var(--muted-fg));
+  }
+
+  .get-look__title {
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    text-transform: uppercase;
+    font-variation-settings: "wght" 900, "opsz" 9;
+  }
+
+  .get-look__intro {
+    color: rgb(var(--muted-fg));
+    max-width: 36rem;
+  }
+
+  .get-look__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .get-look__card {
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid rgb(var(--card-border));
+    position: relative;
+  }
+
+  .get-look__media {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .get-look__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem;
+    background: linear-gradient(180deg, transparent 10%, rgba(6, 6, 9, 0.85) 80%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .get-look__card:hover .get-look__overlay {
+    opacity: 1;
+  }
+
+  .get-look__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .get-look__kit {
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.7rem;
+  }
+
+  .get-look__price {
+    color: rgb(var(--color-primary));
+    font-weight: 600;
+  }
+
+  .recruitment {
+    padding: 5rem 0 6rem;
+    background: radial-gradient(circle at top, rgba(220, 38, 38, 0.25), transparent 60%);
+  }
+
+  .recruitment__grid {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .recruitment__grid {
+      grid-template-columns: 1.2fr 1fr;
+    }
+  }
+
+  .recruitment__eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    font-size: 0.7rem;
+    color: rgb(var(--muted-fg));
+  }
+
+  .recruitment__title {
+    font-size: clamp(2rem, 3vw, 3rem);
+    text-transform: uppercase;
+    font-variation-settings: "wght" 900, "opsz" 9;
+  }
+
+  .recruitment__intro {
+    color: rgb(var(--muted-fg));
+    margin: 1rem 0 2rem;
+  }
+
+  .recruitment__cards {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .recruitment__card {
+    border: 1px solid rgb(var(--card-border));
+    border-radius: 1rem;
+    padding: 1.2rem;
+    background: rgba(12, 12, 18, 0.9);
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .recruitment__card h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .recruitment__card p {
+    color: rgb(var(--muted-fg));
+    font-size: 0.9rem;
+  }
+
+  .recruitment__icon {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 0.75rem;
+    background: linear-gradient(140deg, rgba(220, 38, 38, 0.9), rgba(251, 146, 60, 0.8));
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.35);
+  }
+
+  .squad-empty {
+    padding: 2rem 0;
+    color: rgb(var(--muted-fg));
+  }
+</style>

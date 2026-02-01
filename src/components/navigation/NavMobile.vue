@@ -171,11 +171,11 @@ onMounted(() => {
 }
 .nav-mobile {
   @apply overflow-x-hidden overflow-y-scroll;
-  z-index: 999998;
+  z-index: 50;
   scrollbar-width: none;
   padding-bottom: calc(2em + env(safe-area-inset-bottom));
   &-btn {
-    z-index: 999999;
+    z-index: 51;
   }
 }
 

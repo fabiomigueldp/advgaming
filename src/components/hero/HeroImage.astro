@@ -22,7 +22,7 @@ const { slug } = Astro.params;
 
 <div
   class={`relative rounded mt-28  mb-14 overflow-hidden parallax-wrap container-md ${
-    style.hero_surface || "surface-dark"
+    style.hero_surface === "surface-dark" ? "hero-dark" : (style.hero_surface || "hero-dark")
   }`}
   transition:name={`hero_${slug || Math.random()}`}
   id="header"

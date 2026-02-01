@@ -282,6 +282,17 @@ body {
   color: rgb(var(--fg));
 }
 
+/* Hero dark - always dark regardless of theme */
+.hero-dark {
+  @apply text-light;
+  background-color: rgb(var(--color-dark));
+}
+
+[data-theme="light"] .hero-dark {
+  @apply text-light;
+  background-color: rgb(var(--color-dark));
+}
+
 .surface-muted {
   background-color: rgb(var(--muted-bg));
   color: rgb(var(--fg));
@@ -751,29 +762,16 @@ body {
   background-color: rgb(var(--nav-bg) / var(--nav-bg-opacity, 0));
 
   &-on-dark {
-    /* For dark hero backgrounds: use light text in dark theme, dark text in light theme */
-    --nav-fg: var(--nav-on-light);
+    /* For dark hero backgrounds: always use WHITE text */
+    --nav-fg: 255 255 255;
   }
   &-on-light {
-    /* For light hero backgrounds: always use dark text */
-    --nav-fg: var(--nav-on-light);
+    /* For light hero backgrounds: always use DARK text */
+    --nav-fg: 17 17 17;
   }
   &-inverse {
-    --nav-fg: var(--nav-on-dark);
-    --nav-bg: var(--color-dark);
-  }
-
-  /* Theme-specific overrides */
-  [data-theme="dark"] & {
-    &-on-dark {
-      --nav-fg: var(--nav-on-dark);
-    }
-  }
-
-  [data-theme="light"] & {
-    &-on-dark {
-      --nav-fg: var(--nav-on-light);
-    }
+    --nav-fg: 255 255 255;
+    --nav-bg: 17 17 17;
   }
 }
 
@@ -795,14 +793,17 @@ body {
   .nav {
     transition:
       transform 0.5s ease-out,
-      background-color 0s 0.5s ease-out,
-      color 0.5s ease-out;
+      background-color 0.3s ease-out,
+      color 0.3s ease-out;
     --nav-bg-opacity: 0.92;
+    /* Reset to theme default when scrolled */
     --nav-fg: var(--fg);
-    &-light,
-    &-dark,
+
+    &-on-dark,
+    &-on-light,
     &-inverse {
-      color: inherit;
+      /* When scrolled, use theme default color */
+      --nav-fg: var(--fg);
     }
   }
   .nav__grid {

@@ -1,0 +1,47 @@
+---
+import { Icon } from "astro-icon/components";
+import Picture from "@components/media/Picture.astro";
+
+const { partner, product, productUrl, platformIcon } = Astro.props;
+const name = partner.data.name;
+const handle = partner.data.handle;
+const role = partner.data.role;
+const avatar = partner.data.avatar;
+---
+
+<article class="roster-card">
+  <div class="roster-card__media">
+    <Picture
+      src={avatar}
+      alt={name}
+      sizes="(min-width: 1024px) 240px, 50vw"
+      aspect={1}
+      layout="fullWidth"
+    />
+    <div class="roster-card__glow"></div>
+  </div>
+  <div class="roster-card__body">
+    <div class="roster-card__top">
+      <div class="roster-card__platform">
+        <Icon name={platformIcon} class="roster-card__platform-icon" />
+        <span>{partner.data.platform}</span>
+      </div>
+      <a
+        class="roster-card__channel"
+        href={partner.data.channel_url}
+        target="_blank"
+        rel="noreferrer"
+      >
+        Ver canal
+      </a>
+    </div>
+    <h3 class="roster-card__name">{name}</h3>
+    {handle && <p class="roster-card__handle">{handle}</p>}
+    {role && <p class="roster-card__role">{role}</p>}
+    {productUrl && (
+      <a class="roster-card__kit" href={productUrl}>
+        {product?.data?.name ? `Kit: ${product.data.name}` : "Ver kit"}
+      </a>
+    )}
+  </div>
+</article>

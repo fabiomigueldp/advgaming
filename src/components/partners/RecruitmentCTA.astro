@@ -1,0 +1,48 @@
+---
+const {
+  title = "Tem o que e preciso?",
+  intro = "Entre para o Squad e receba kits gratuitos, comissao por vendas e visibilidade real.",
+  cta_label = "Aplique agora",
+  cta_href = "#contact",
+} = Astro.props;
+
+const benefits = [
+  {
+    title: "Kits gratuitos",
+    description: "Acesso antecipado a novos packs e drops exclusivos.",
+    icon: "gift",
+  },
+  {
+    title: "Comissao por venda",
+    description: "Programa de afiliados com tracking e repasses mensais.",
+    icon: "trophy",
+  },
+  {
+    title: "Divulgacao",
+    description: "Destaque no Hall of Fame e campanhas oficiais.",
+    icon: "bolt",
+  },
+];
+---
+
+<section class="recruitment" id="recruitment">
+  <div class="container-xl">
+    <div class="recruitment__grid">
+      <div class="recruitment__copy">
+        <p class="recruitment__eyebrow">Recruitment</p>
+        <h2 class="recruitment__title">{title}</h2>
+        <p class="recruitment__intro">{intro}</p>
+        <a class="btn btn-primary btn-lg" href={cta_href}>{cta_label}</a>
+      </div>
+      <div class="recruitment__cards">
+        {benefits.map((benefit) => (
+          <div class="recruitment__card">
+            <div class="recruitment__icon" aria-hidden="true"></div>
+            <h3>{benefit.title}</h3>
+            <p>{benefit.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

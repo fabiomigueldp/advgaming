@@ -1,0 +1,56 @@
+---
+import Picture from "@components/media/Picture.astro";
+
+const {
+  title = "Streamers que definem o jogo",
+  intro =
+    "A elite que equipa suas lives com os kits Adventury Gaming. Prova social, comunidade e performance em um unico esquadrao.",
+  cta_label = "Junte-se ao Squad",
+  cta_href = "#recruitment",
+  secondary_label = "Ver o roster",
+  secondary_href = "#roster",
+  video = "/video/bob-bg.mp4",
+  poster = "/src/assets/speed.webp",
+} = Astro.props;
+---
+
+<section class="squad-hero" id="top">
+  <div class="squad-hero__media">
+    <video
+      class="squad-hero__video"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      poster={poster}
+      aria-hidden="true"
+    >
+      <source src={video} type="video/mp4" />
+    </video>
+    <div class="squad-hero__poster" aria-hidden="true">
+      <Picture
+        src={poster}
+        alt=""
+        sizes="100vw"
+        aspect={16 / 9}
+        layout="fill"
+        loading="eager"
+      />
+    </div>
+    <div class="squad-hero__overlay"></div>
+    <div class="squad-hero__mesh"></div>
+  </div>
+
+  <div class="squad-hero__content container-xl">
+    <p class="squad-hero__eyebrow">The Adventury Squad</p>
+    <h1 class="squad-hero__title">{title}</h1>
+    <p class="squad-hero__intro">{intro}</p>
+    <div class="squad-hero__actions">
+      <a class="btn btn-primary btn-lg" href={cta_href}>{cta_label}</a>
+      <a class="btn btn-outline btn-lg" href={secondary_href}>
+        {secondary_label}
+      </a>
+    </div>
+  </div>
+</section>

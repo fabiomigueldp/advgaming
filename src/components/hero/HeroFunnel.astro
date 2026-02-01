@@ -30,7 +30,7 @@ const mediaClass = () => {
   hero && (
     <div
       class={`hero-funnel parallax-wrap relative ${
-        hero?.style?.surface || "surface-dark"
+        hero?.style?.surface === "surface-dark" ? "hero-dark" : (hero?.style?.surface || "hero-dark")
       } ${hero?.style?.class || ""} ${hero?.style?.layout || ""} ${
         hero?.style?.media || ""
       }`}

@@ -69,6 +69,18 @@ const newsletters = () => {
       description={description}
       thumbnail={!!og_image ? og_image : thumbnail}
     />
+    <script is:inline>
+      // Initialize scroll states immediately to prevent visual inconsistencies
+      (function() {
+        const root = document.documentElement;
+        const scrollPos = window.scrollY || document.documentElement.scrollTop;
+        const isTop = scrollPos < 100;
+        
+        root.setAttribute('data-is-top', String(isTop));
+        root.setAttribute('data-is-scrolling-up', 'true');
+        root.setAttribute('data-is-bottom', 'false');
+      })();
+    </script>
   </head>
   <body class={`surface-base ${page_class || ""}`}>
     <Header
