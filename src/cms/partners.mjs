@@ -67,7 +67,7 @@ const partnerFields = [
     label: "URL do canal",
     name: "channel_url",
     widget: "string",
-    required: true,
+    required: false,
   },
   {
     label: "Avatar",
@@ -86,6 +86,32 @@ const partnerFields = [
     name: "screenshot",
     widget: "image",
     required: false,
+  },
+  {
+    label: "Bio curta",
+    name: "bio",
+    widget: "text",
+    required: false,
+  },
+  {
+    label: "Socials",
+    name: "socials",
+    widget: "list",
+    required: false,
+    fields: [
+      {
+        label: "Plataforma",
+        name: "platform",
+        widget: "select",
+        options: platformOptions,
+        default: "twitch",
+      },
+      {
+        label: "URL",
+        name: "url",
+        widget: "string",
+      },
+    ],
   },
   {
     label: "Produto vinculado",

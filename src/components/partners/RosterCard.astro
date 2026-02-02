@@ -7,6 +7,17 @@ const name = partner.data.name;
 const handle = partner.data.handle;
 const role = partner.data.role;
 const avatar = partner.data.avatar;
+const bio = partner.data.bio;
+const socials = partner.data.socials || [];
+const platformLabels = {
+  twitch: "Twitch",
+  youtube: "YouTube",
+  kick: "Kick",
+  tiktok: "TikTok",
+  facebook: "Facebook",
+  other: "Creator",
+};
+const platformLabel = platformLabels[partner.data.platform] || partner.data.platform;
 ---
 
 <article class="roster-card">
@@ -24,7 +35,7 @@ const avatar = partner.data.avatar;
     <div class="roster-card__top">
       <div class="roster-card__platform">
         <Icon name={platformIcon} class="roster-card__platform-icon" />
-        <span>{partner.data.platform}</span>
+        <span>{platformLabel}</span>
       </div>
       <a
         class="roster-card__channel"
@@ -38,10 +49,23 @@ const avatar = partner.data.avatar;
     <h3 class="roster-card__name">{name}</h3>
     {handle && <p class="roster-card__handle">{handle}</p>}
     {role && <p class="roster-card__role">{role}</p>}
-    {productUrl && (
-      <a class="roster-card__kit" href={productUrl}>
-        {product?.data?.name ? `Kit: ${product.data.name}` : "Ver kit"}
-      </a>
+    {bio && <p class="roster-card__bio">{bio}</p>}
+    {socials.length > 0 ? (
+      <div class="roster-card__socials">
+        {socials.map((item) => (
+          <a
+            class="roster-card__social"
+            href={item.url}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={item.platform}
+          >
+            <Icon name={item.platform} class="roster-card__social-icon" />
+          </a>
+        ))}
+      </div>
+    ) : (
+      <span class="roster-card__pending">Links em breve</span>
     )}
   </div>
 </article>

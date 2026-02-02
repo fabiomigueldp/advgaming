@@ -249,6 +249,11 @@ const page = defineCollection({
     intro: z.string().optional(),
     thumbnail: z.string().optional(),
     og_image: z.string().optional(),
+
+    legends_title: z.string().optional(),
+    legends_subtitle: z.string().optional(),
+    roster_title: z.string().optional(),
+    roster_subtitle: z.string().optional(),
     hero: z
       .object({
         title: z.string().optional(),
@@ -552,10 +557,28 @@ const partners = defineCollection({
       "facebook",
       "other",
     ]),
-    channel_url: z.string(),
+    channel_url: z.string().optional(),
     avatar: z.string(),
     cutout: z.string().optional(),
     screenshot: z.string().optional(),
+    bio: z.string().optional(),
+    socials: z
+      .array(
+        z.object({
+          platform: z.enum([
+            "twitch",
+            "youtube",
+            "kick",
+            "tiktok",
+            "instagram",
+            "facebook",
+            "x",
+            "other",
+          ]),
+          url: z.string(),
+        }),
+      )
+      .optional(),
     product: reference("products").optional(),
     showcase: z
       .array(

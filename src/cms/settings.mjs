@@ -372,6 +372,17 @@ export const settings = {
       ],
     },
     {
+      name: "squad",
+      label: "Squad",
+      file: "src/content/config/pt/squad.mdx",
+      fields: [
+        { name: "legends_title", label: "Legends Title", widget: "string" },
+        { name: "legends_subtitle", label: "Legends Subtitle", widget: "text" },
+        { name: "roster_title", label: "Roster Title", widget: "string" },
+        { name: "roster_subtitle", label: "Roster Subtitle", widget: "text" },
+      ],
+    },
+    {
       name: "style",
       label: t("style"),
       file: "src/content/config/style.mdx",

@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE, localizeUrl, type SupportedLocale } from "@util/translate";
@@ -27,6 +27,17 @@ const partners = (allPartners as any[])
 const allProducts = await getCollection("products");
 const products = allProducts.filter((product) => product.slug.startsWith(`${currentLang}/`));
 const productMap = new Map(products.map((product) => [product.slug, product]));
+
+const squadConfig = (await getEntry("config", `${currentLang}/squad`)) as any;
+const squadData = squadConfig?.data as any;
+const rosterTitle = squadData?.roster_title || "O time completo do Squad";
+const rosterSubtitle =
+  squadData?.roster_subtitle ||
+  "Criadores em ascensao, parceiros oficiais e afiliados que usam nossos kits.";
+const legendsTitle = squadData?.legends_title || "Destaques que definem o meta";
+const legendsSubtitle =
+  squadData?.legends_subtitle ||
+  "A elite da criacao de conteudo que domina o setup e dita tendencia.";
 
 const getRefSlug = (ref) => {
   if (!ref) return null;
@@ -98,38 +109,35 @@ const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas
     <section class="squad-section" id="legends">
       <div class="container-xl squad-section__header">
         <p class="squad-eyebrow">The Legends</p>
-        <h2 class="squad-title">Destaques que definem o meta</h2>
-        <p class="squad-subtitle">
-          A elite da criacao de conteudo que domina o setup e dita tendencia.
-        </p>
+        <h2 class="squad-title">{legendsTitle}</h2>
+        <p class="squad-subtitle">{legendsSubtitle}</p>
       </div>
 
       {legends.length > 0 ? (
-        <div class="legend-carousel" data-carousel-scope>
-          <div class="legend-carousel__track" data-carousel-track>
+        <div
+          class={`legend-carousel ${legends.length <= 1 ? "legend-carousel--static" : ""}`}
+          data-carousel-scope
+        >
+          <div
+            class="legend-carousel__track"
+            data-carousel-track
+            data-carousel={legends.length > 1 ? "active" : "static"}
+          >
             {legends.map((partner) => {
-              const productSlug = getRefSlug(partner.data.product);
-              const product = productSlug ? productMap.get(productSlug) : null;
-              const productUrl = product ? getProductUrl(product) : null;
               const platformIcon = platformIcons[partner.data.platform] || "share";
-              return (
-                <LegendCard
-                  partner={partner}
-                  product={product}
-                  productUrl={productUrl}
-                  platformIcon={platformIcon}
-                />
-              );
+              return <LegendCard partner={partner} platformIcon={platformIcon} />;
             })}
           </div>
-          <div class="legend-carousel__controls">
-            <button class="legend-carousel__btn" data-carousel-prev aria-label="Anterior">
-              <span aria-hidden="true">‹</span>
-            </button>
-            <button class="legend-carousel__btn" data-carousel-next aria-label="Proximo">
-              <span aria-hidden="true">›</span>
-            </button>
-          </div>
+          {legends.length > 1 && (
+            <div class="legend-carousel__controls">
+              <button class="legend-carousel__btn" data-carousel-prev aria-label="Anterior">
+                <span aria-hidden="true">‹</span>
+              </button>
+              <button class="legend-carousel__btn" data-carousel-next aria-label="Proximo">
+                <span aria-hidden="true">›</span>
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <div class="container-xl squad-empty">
@@ -141,10 +149,8 @@ const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas
     <section class="squad-section" id="roster">
       <div class="container-xl squad-section__header">
         <p class="squad-eyebrow">The Roster</p>
-        <h2 class="squad-title">O time completo do Squad</h2>
-        <p class="squad-subtitle">
-          Criadores em ascensao, parceiros oficiais e afiliados que usam nossos kits.
-        </p>
+        <h2 class="squad-title">{rosterTitle}</h2>
+        <p class="squad-subtitle">{rosterSubtitle}</p>
       </div>
 
       {roster.length > 0 ? (
@@ -184,6 +190,8 @@ const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas
     const prev = scope.querySelector("[data-carousel-prev]");
     const next = scope.querySelector("[data-carousel-next]");
     if (!track || !prev || !next) return;
+    if (track.getAttribute("data-carousel") === "static") return;
+    if (!window.matchMedia("(max-width: 1024px)").matches) return;
 
     const scrollBy = () => Math.max(track.clientWidth * 0.8, 300);
 
@@ -348,16 +356,34 @@ const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas
 
   .legend-carousel__track {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(16rem, 28rem);
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 2rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
     padding: 0 2rem 1rem;
   }
 
-  .legend-carousel__track > * {
-    scroll-snap-align: start;
+  @media (max-width: 1024px) {
+    .legend-carousel__track {
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(16rem, 24rem);
+      grid-template-columns: none;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+
+    .legend-carousel__track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .legend-carousel__track > * {
+      scroll-snap-align: start;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .legend-carousel__track > * {
+      scroll-snap-align: start;
+    }
   }
 
   .legend-carousel__controls {
@@ -365,6 +391,12 @@ const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas
     gap: 0.75rem;
     justify-content: flex-end;
     padding: 1rem 2rem 0;
+  }
+
+  @media (min-width: 1025px) {
+    .legend-carousel__controls {
+      display: none;
+    }
   }
 
   .legend-carousel__btn {
@@ -389,40 +421,112 @@ const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas
 
   .legend-card__surface {
     position: relative;
-    background: linear-gradient(160deg, rgba(18, 18, 24, 0.95), rgba(8, 8, 10, 0.9));
-    border: 1px solid rgb(var(--card-border));
+    background: linear-gradient(140deg, rgba(22, 22, 30, 0.98), rgba(6, 6, 10, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 1.5rem;
     padding: 2rem;
     display: grid;
     gap: 1.5rem;
     overflow: hidden;
     min-height: 24rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  }
+
+  .legend-card__surface::before {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: 1.45rem;
+    background: linear-gradient(120deg, rgba(220, 38, 38, 0.15), rgba(59, 130, 246, 0.05) 40%, transparent 70%);
+    opacity: 0.8;
+    pointer-events: none;
   }
 
   .legend-card__surface::after {
     content: "";
     position: absolute;
-    inset: 40% -20% -30% auto;
-    width: 60%;
+    inset: 35% -15% -30% auto;
+    width: 65%;
     background: radial-gradient(circle, rgba(220, 38, 38, 0.35) 0%, rgba(220, 38, 38, 0) 70%);
-    filter: blur(30px);
+    filter: blur(35px);
+  }
+
+  .legend-card__hud {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .legend-card__content {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .legend-card__content::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.12), transparent 60%);
+    opacity: 0.6;
+    pointer-events: none;
   }
 
   .legend-card__cutout {
-    position: absolute;
-    right: 1.5rem;
-    bottom: 0;
-    width: min(60%, 18rem);
-    transform: translateY(10%);
+    position: relative;
+    width: 100%;
+    max-width: 16.5rem;
+    margin-left: auto;
     pointer-events: none;
+    filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.45));
+  }
+
+  .legend-card__cutout img {
+    border-radius: 1rem;
+    object-fit: contain;
+  }
+
+  .legend-card__cutout--framed img {
+    object-fit: cover;
   }
 
   .legend-card__meta {
     position: relative;
-    z-index: 2;
     display: grid;
-    gap: 0.4rem;
-    max-width: 60%;
+    gap: 0.45rem;
+    z-index: 1;
+  }
+
+
+  .legend-card__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .legend-card__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgb(var(--color-primary));
+    background: rgba(220, 38, 38, 0.12);
+    border: 1px solid rgba(220, 38, 38, 0.4);
+  }
+
+  .legend-card__name {
+    letter-spacing: 0.02em;
   }
 
   .legend-card__platform {
@@ -431,6 +535,7 @@ const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas
     gap: 0.5rem;
     font-size: 0.75rem;
     text-transform: uppercase;
+    letter-spacing: 0.2em;
     color: rgb(var(--muted-fg));
   }
 
@@ -458,13 +563,89 @@ const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 0.5rem;
+    align-items: center;
   }
 
-  .legend-card__kit {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
+  .legend-card__actions:empty {
+    display: none;
+  }
+
+  .legend-card__cta {
+    background-color: rgba(15, 15, 20, 0.6);
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: rgb(var(--fg)) !important;
+  }
+
+  .legend-card__cta:hover {
+    border-color: rgb(var(--color-primary) / 0.6) !important;
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.25);
+  }
+
+  .legend-card__bio {
+    color: rgb(var(--muted-fg));
+    font-size: 0.85rem;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .legend-card__socials {
+    display: inline-flex;
+    gap: 0.45rem;
+  }
+
+  .legend-card__social {
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(10, 10, 14, 0.6);
+    color: rgb(var(--muted-fg));
+    transition: all 0.2s ease;
+  }
+
+  .legend-card__social:hover {
     color: rgb(var(--color-primary));
+    border-color: rgba(220, 38, 38, 0.6);
+    box-shadow: 0 0 18px rgba(220, 38, 38, 0.25);
+  }
+
+  .legend-card__social-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+
+  .legend-card__cutout--framed {
+    border-radius: 1.2rem;
+    padding: 0.6rem;
+    background: rgba(12, 12, 18, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  }
+
+  .legend-card__cutout--framed img {
+    border-radius: 0.9rem;
+  }
+
+  @media (max-width: 768px) {
+    .legend-card__surface {
+      padding: 1.6rem;
+      min-height: 20rem;
+    }
+
+    .legend-card__content {
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+
+    .legend-card__cutout {
+      max-width: 14rem;
+    }
   }
 
   .roster-grid {
@@ -495,6 +676,10 @@ const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas
   }
 
   .roster-card__media img {
+    border-radius: 1.1rem;
+  }
+
+  .roster-card__media img {
     transition: transform 0.4s ease;
   }
 
@@ -507,6 +692,15 @@ const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas
     inset: 0;
     border: 1px solid transparent;
     background: radial-gradient(circle at top, rgba(220, 38, 38, 0.2), transparent 60%);
+  }
+
+  .roster-card__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(6, 6, 9, 0) 20%, rgba(6, 6, 9, 0.6) 100%);
+    opacity: 0.6;
+    pointer-events: none;
   }
 
   .roster-card__body {
@@ -547,6 +741,53 @@ const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas
   .roster-card__role {
     color: rgb(var(--muted-fg));
     font-size: 0.85rem;
+  }
+
+  .roster-card__bio {
+    color: rgb(var(--muted-fg));
+    font-size: 0.8rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .roster-card__socials {
+    display: inline-flex;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+  }
+
+  .roster-card__social {
+    width: 1.8rem;
+    height: 1.8rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(10, 10, 14, 0.6);
+    color: rgb(var(--muted-fg));
+    transition: all 0.2s ease;
+  }
+
+  .roster-card__social:hover {
+    color: rgb(var(--color-primary));
+    border-color: rgba(220, 38, 38, 0.6);
+    box-shadow: 0 0 14px rgba(220, 38, 38, 0.2);
+  }
+
+  .roster-card__social-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  .roster-card__pending {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgb(var(--muted-fg));
+    margin-top: 0.4rem;
   }
 
   .roster-card__kit {
@@ -653,6 +894,13 @@ const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas
     align-items: center;
   }
 
+  .recruitment__copy {
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+    background: rgba(12, 12, 18, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
   @media (min-width: 900px) {
     .recruitment__grid {
       grid-template-columns: 1.2fr 1fr;
@@ -680,6 +928,11 @@ const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas
   .recruitment__cards {
     display: grid;
     gap: 1rem;
+    position: relative;
+    padding: 1rem;
+    border-radius: 1.5rem;
+    background: rgba(10, 10, 14, 0.6);
+    border: 1px solid rgba(220, 38, 38, 0.2);
   }
 
   .recruitment__card {
@@ -689,6 +942,9 @@ const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas
     background: rgba(12, 12, 18, 0.9);
     display: grid;
     gap: 0.4rem;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
   }
 
   .recruitment__card h3 {
@@ -707,6 +963,33 @@ const pageDescription = "O Squad e o hall of fame dos streamers que equipam suas
     border-radius: 0.75rem;
     background: linear-gradient(140deg, rgba(220, 38, 38, 0.9), rgba(251, 146, 60, 0.8));
     box-shadow: 0 0 20px rgba(220, 38, 38, 0.35);
+    display: grid;
+    place-items: center;
+  }
+
+  .recruitment__icon-svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    color: rgb(var(--fg));
+  }
+
+  .recruitment__card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 1rem;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    opacity: 0.25;
+    pointer-events: none;
+  }
+
+  .recruitment__card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.25), transparent 60%);
+    opacity: 0.4;
+    pointer-events: none;
   }
 
   .squad-empty {

@@ -511,6 +511,13 @@ declare module 'astro:content' {
   collection: "config";
   data: any
 } & { render(): Render[".mdx"] };
+"pt/squad.mdx": {
+	id: "pt/squad.mdx";
+  slug: "pt/squad";
+  body: string;
+  collection: "config";
+  data: any
+} & { render(): Render[".mdx"] };
 "pt/style.mdx": {
 	id: "pt/style.mdx";
   slug: "pt/style";
@@ -718,9 +725,37 @@ declare module 'astro:content' {
 } & { render(): Render[".mdx"] };
 };
 "partners": {
-"pt/README.mdx": {
-	id: "pt/README.mdx";
-  slug: "pt/readme";
+"pt/bobsdih.mdx": {
+	id: "pt/bobsdih.mdx";
+  slug: "pt/bobsdih";
+  body: string;
+  collection: "partners";
+  data: any
+} & { render(): Render[".mdx"] };
+"pt/casal-inacreditavel.mdx": {
+	id: "pt/casal-inacreditavel.mdx";
+  slug: "pt/casal-inacreditavel";
+  body: string;
+  collection: "partners";
+  data: any
+} & { render(): Render[".mdx"] };
+"pt/eros-multiverso.mdx": {
+	id: "pt/eros-multiverso.mdx";
+  slug: "pt/eros-multiverso";
+  body: string;
+  collection: "partners";
+  data: any
+} & { render(): Render[".mdx"] };
+"pt/noir.mdx": {
+	id: "pt/noir.mdx";
+  slug: "pt/noir";
+  body: string;
+  collection: "partners";
+  data: any
+} & { render(): Render[".mdx"] };
+"pt/vaiseroultimo.mdx": {
+	id: "pt/vaiseroultimo.mdx";
+  slug: "pt/vaiseroultimo";
   body: string;
   collection: "partners";
   data: any
