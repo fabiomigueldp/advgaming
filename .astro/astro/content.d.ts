@@ -762,13 +762,6 @@ declare module 'astro:content' {
 } & { render(): Render[".mdx"] };
 };
 "products": {
-"pt/kit-advanced.mdx": {
-	id: "pt/kit-advanced.mdx";
-  slug: "pt/kit-advanced";
-  body: string;
-  collection: "products";
-  data: any
-} & { render(): Render[".mdx"] };
 "pt/kit-basic.mdx": {
 	id: "pt/kit-basic.mdx";
   slug: "pt/kit-basic";
@@ -776,16 +769,16 @@ declare module 'astro:content' {
   collection: "products";
   data: any
 } & { render(): Render[".mdx"] };
-"pt/kit-demo.mdx": {
-	id: "pt/kit-demo.mdx";
-  slug: "pt/kit-demo";
+"pt/kit-custom.mdx": {
+	id: "pt/kit-custom.mdx";
+  slug: "pt/kit-custom";
   body: string;
   collection: "products";
   data: any
 } & { render(): Render[".mdx"] };
-"pt/kit-intermediate.mdx": {
-	id: "pt/kit-intermediate.mdx";
-  slug: "pt/kit-intermediate";
+"pt/kit-demo.mdx": {
+	id: "pt/kit-demo.mdx";
+  slug: "pt/kit-demo";
   body: string;
   collection: "products";
   data: any

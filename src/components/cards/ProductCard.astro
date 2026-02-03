@@ -13,7 +13,8 @@ interface Props {
 }
 
 const { product, lang } = Astro.props;
-const { data, slug } = product;
+const { data, slug } = product as any;
+const productData = data as any;
 
 // Extract slug without locale prefix
 const productSlug = slug.includes('/') ? slug.split('/').pop() : slug;
@@ -21,17 +22,15 @@ const productUrl = localizeUrl(`/products/${productSlug}`, lang);
 
 const levelLabels = {
   free: "Gratuito",
-  basic: "Básico",
-  intermediate: "Intermediário",
-  advanced: "Avançado",
-};
+  basic: "Creator Pack",
+  custom: "Personalizado",
+} as const;
 
 const levelBadgeClass = {
   free: 'badge-free',
   basic: 'badge-basic',
-  intermediate: 'badge-intermediate',
-  advanced: 'badge-advanced'
-};
+  custom: 'badge-custom',
+} as const;
 ---
 
 <article class="product-card group">
@@ -47,9 +46,9 @@ const levelBadgeClass = {
         <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/60 to-transparent"></div>
       </div>
 
-      <span class={`badge ${levelBadgeClass[data.product_level]} absolute top-4 left-4`}>
-        {levelLabels[data.product_level]}
-      </span>
+    <span class={`badge ${levelBadgeClass[productData.product_level]} absolute top-4 left-4`}>
+      {levelLabels[productData.product_level]}
+    </span>
     </div>
     
     <div class="product-card__content">
@@ -58,7 +57,7 @@ const levelBadgeClass = {
       
       <div class="product-card__footer">
         <div class="product-card__price">
-          {data.product_level === 'free' ? (
+          {productData.product_level === 'free' ? (
             <span class="text-success font-bold text-xl">Grátis</span>
           ) : (
             <span class="product-card__price-text font-bold text-xl">{data.price_display}</span>
@@ -66,8 +65,8 @@ const levelBadgeClass = {
         </div>
         
         <div class="product-card__actions">
-          <span class={`btn btn-sm ${data.product_level === "free" ? "btn-outline" : "btn-primary"}`}>
-            {data.product_level === "free" ? "Baixar" : "Ver Detalhes"}
+          <span class={`btn btn-sm ${productData.product_level === "free" ? "btn-outline" : "btn-primary"}`}>
+            {productData.product_level === "free" ? "Baixar" : productData.product_level === "basic" ? "Ver Detalhes" : "Solicitar"}
           </span>
         </div>
       </div>

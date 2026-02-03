@@ -29,23 +29,24 @@ const products = allProducts
   .sort((a, b) => a.data.sort_order - b.data.sort_order);
 
 const pageTitle = "Streamer Kits";
-const pageDescription = "Kits profissionais para streamers. Overlays, alertas, paineis e muito mais para suas transmissoes.";
+const pageDescription = "Kits profissionais para streamers. Starter Pack gratuito, Creator Pack personalizado e kit sob demanda.";
 ---
 
 <BaseLayout title={pageTitle} description={pageDescription} lang={lang}>
   <main class="surface-dark min-h-screen">
     <!-- Hero Section -->
-    <section class="pt-32 pb-16">
-      <div class="container-xl">
-        <div class="max-w-3xl">
-          <h1 class="title mb-4" style="color: rgb(var(--fg));">Streamer Kits</h1>
-          <p class="text-xl" style="color: rgb(var(--muted-fg));">
-            Kits profissionais desenvolvidos por designers especializados.
-            Do gratuito ao avancado, temos o kit perfeito para sua stream.
-          </p>
-        </div>
-      </div>
-    </section>
+     <section class="products-hero pt-32 pb-16">
+       <div class="container-xl">
+         <div class="max-w-3xl">
+           <p class="products-hero__eyebrow">Streamer Kits</p>
+           <h1 class="title mb-4" style="color: rgb(var(--fg));">Escolha seu kit, eleve sua stream</h1>
+           <p class="text-xl" style="color: rgb(var(--muted-fg));">
+             Kits profissionais desenvolvidos para streamers em qualquer etapa.
+             Do Starter Pack gratuito ao Creator Pack e opcoes sob demanda.
+           </p>
+         </div>
+       </div>
+     </section>
 
     <!-- Filters -->
     <section class="pb-8">
@@ -61,25 +62,19 @@ const pageDescription = "Kits profissionais para streamers. Overlays, alertas, p
              class="filter-btn"
              data-filter="free"
            >
-             Gratuito
+             Starter Pack
            </button>
            <button
              class="filter-btn"
              data-filter="basic"
            >
-             Básico
+             Creator Pack
            </button>
            <button
              class="filter-btn"
-             data-filter="intermediate"
+             data-filter="custom"
            >
-             Intermediário
-           </button>
-           <button
-             class="filter-btn"
-             data-filter="advanced"
-           >
-             Avançado
+             Personalizado
            </button>
         </div>
       </div>
@@ -88,7 +83,7 @@ const pageDescription = "Kits profissionais para streamers. Overlays, alertas, p
     <!-- Products Grid -->
     <section class="pb-20">
       <div class="container-xl">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="products-grid">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="products-grid">
           {products.map((product) => (
             <div class="product-item" data-level={product.data.product_level}>
               <ProductCard product={product} lang={lang} />
@@ -96,20 +91,20 @@ const pageDescription = "Kits profissionais para streamers. Overlays, alertas, p
           ))}
         </div>
         
-        {products.length === 0 && (
-          <div class="text-center py-20">
-            <p class="text-neutral-500 text-lg">Nenhum produto encontrado.</p>
-          </div>
-        )}
+      {products.length === 0 && (
+        <div class="text-center py-20">
+          <p class="text-neutral-500 text-lg">Nenhum produto encontrado.</p>
+        </div>
+      )}
       </div>
     </section>
 
     <!-- Comparison CTA -->
-    <section class="py-16" style="border-top: 1px solid rgb(var(--border));">
+    <section class="products-cta py-16" style="border-top: 1px solid rgb(var(--border));">
       <div class="container-xl text-center">
         <h2 class="text-2xl font-bold mb-4" style="color: rgb(var(--fg));">Nao sabe qual escolher?</h2>
         <p class="mb-8 max-w-xl mx-auto" style="color: rgb(var(--muted-fg));">
-          Compare os recursos de cada kit e encontre o ideal para seu momento.
+          Compare os pacotes e escolha o ideal para o seu momento.
         </p>
         <a href="#comparison" class="btn btn-outline">
           Comparar Kits
@@ -118,91 +113,56 @@ const pageDescription = "Kits profissionais para streamers. Overlays, alertas, p
     </section>
 
     <!-- Comparison Table -->
-    <section class="py-16" id="comparison" style="background-color: rgb(var(--muted-bg));">
+    <section class="products-compare py-16" id="comparison" style="background-color: rgb(var(--muted-bg));">
       <div class="container-xl">
         <h2 class="text-2xl font-bold mb-8 text-center" style="color: rgb(var(--fg));">Comparacao de Kits</h2>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-left">
+         <div class="overflow-x-auto">
+           <table class="w-full text-left comparison-table">
             <thead>
               <tr style="border-bottom: 1px solid rgb(var(--border));">
                 <th class="py-4 px-4 font-medium" style="color: rgb(var(--muted-fg));">Recurso</th>
-                <th class="py-4 px-4 text-center" style="color: rgb(var(--color-success));">Free</th>
-                <th class="py-4 px-4 text-center" style="color: rgb(var(--color-info));">Basic</th>
-                <th class="py-4 px-4 text-center" style="color: rgb(var(--color-accent));">Intermediate</th>
-                <th class="py-4 px-4 text-center" style="color: rgb(var(--color-primary));">Advanced</th>
+                <th class="py-4 px-4 text-center" style="color: rgb(var(--color-success));">Starter Pack</th>
+                <th class="py-4 px-4 text-center" style="color: rgb(var(--color-info));">Creator Pack</th>
+                <th class="py-4 px-4 text-center" style="color: rgb(var(--color-accent));">Personalizado</th>
               </tr>
             </thead>
             <tbody class="text-sm">
               <tr style="border-bottom: 1px solid rgb(var(--border));">
-                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Overlays</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">4</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">7</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">10+</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">20+</td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgb(var(--border));">
-                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Alertas</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">2</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">5</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">10+</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">15+</td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgb(var(--border));">
-                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Paineis</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">5</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">10</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">15</td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgb(var(--border));">
-                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Transicoes</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">2</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">4</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">8</td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgb(var(--border));">
-                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Widgets</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">5</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">10+</td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgb(var(--border));">
-                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Emotes</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Basico</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">20</td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgb(var(--border));">
-                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Variacoes de cor</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">1</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">1</td>
+                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Telas inclusas</td>
                 <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">3</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">6</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">5</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Sob demanda</td>
               </tr>
               <tr style="border-bottom: 1px solid rgb(var(--border));">
-                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Suporte</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">30 dias</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">60 dias</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">90 dias VIP</td>
+                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Personalizacao do nome</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">Nao</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Sim</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Completa</td>
               </tr>
               <tr style="border-bottom: 1px solid rgb(var(--border));">
-                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Setup guiado</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">-</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--color-success)); font-weight: 600;">Incluso</td>
+                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Pronto para OBS</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Sim</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Sim</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Sim</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgb(var(--border));">
+                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Entrega</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Imediata</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">1 dia util</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">A combinar</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgb(var(--border));">
+                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Ideal para</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Iniciantes</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Criadores em crescimento</td>
+                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Profissionais</td>
               </tr>
               <tr>
                 <td class="py-4 px-4 font-bold" style="color: rgb(var(--fg));">Preco</td>
                 <td class="py-4 px-4 text-center font-bold" style="color: rgb(var(--color-success));">Gratis</td>
-                <td class="py-4 px-4 text-center font-bold" style="color: rgb(var(--color-info));">R$ 49,90</td>
-                <td class="py-4 px-4 text-center font-bold" style="color: rgb(var(--color-accent));">R$ 99,90</td>
-                <td class="py-4 px-4 text-center font-bold" style="color: rgb(var(--color-primary));">R$ 199,90</td>
+                <td class="py-4 px-4 text-center font-bold" style="color: rgb(var(--color-info));">R$ 24,90</td>
+                <td class="py-4 px-4 text-center font-bold" style="color: rgb(var(--color-accent));">Sob consulta</td>
               </tr>
             </tbody>
           </table>
@@ -213,6 +173,50 @@ const pageDescription = "Kits profissionais para streamers. Overlays, alertas, p
 </BaseLayout>
 
 <style>
+  .products-hero {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .products-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.2), transparent 60%),
+      radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.15), transparent 55%);
+    pointer-events: none;
+  }
+
+  .products-hero__eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    font-size: 0.75rem;
+    color: rgb(var(--muted-fg));
+    margin-bottom: 0.5rem;
+  }
+
+  .products-cta {
+    background: linear-gradient(180deg, rgba(10, 10, 14, 0.6), rgba(6, 6, 9, 0.95));
+  }
+
+  .products-compare table {
+    border-collapse: collapse;
+  }
+
+  .products-compare th,
+  .products-compare td {
+    border-bottom: 1px solid rgb(var(--border));
+  }
+
+  .comparison-table th:first-child,
+  .comparison-table td:first-child {
+    width: 30%;
+  }
+
+  .products-compare tbody tr:hover td {
+    background: rgba(15, 15, 20, 0.4);
+  }
+
   .filter-btn {
     @apply px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200;
     background-color: rgb(var(--muted-bg));

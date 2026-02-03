@@ -1,12 +1,12 @@
 import { toolbarButtons, toolbarButtonsInline } from "./common.mjs";
 
 // Supported locales for i18n
-const SUPPORTED_LOCALES = ['en', 'pt', 'es', 'fr'];
+const SUPPORTED_LOCALES = ["en", "pt", "es", "fr"];
 const LOCALE_LABELS = {
-  en: 'English',
-  pt: 'Português',
-  es: 'Español',
-  fr: 'Français'
+  en: "English",
+  pt: "Português",
+  es: "Español",
+  fr: "Français",
 };
 
 // Product fields schema
@@ -29,11 +29,28 @@ const getProductFields = () => [
     widget: "select",
     options: [
       { label: "Gratuito", value: "free" },
-      { label: "Basic", value: "basic" },
-      { label: "Intermediate", value: "intermediate" },
-      { label: "Advanced", value: "advanced" },
+      { label: "Creator Pack", value: "basic" },
+      { label: "Personalizado", value: "custom" },
     ],
     required: true,
+  },
+  {
+    label: "Modo de Compra",
+    name: "purchase_mode",
+    widget: "select",
+    options: [
+      { label: "Download", value: "download" },
+      { label: "Checkout", value: "checkout" },
+      { label: "Contato", value: "contact" },
+    ],
+    required: false,
+  },
+  {
+    label: "Prazo de Entrega",
+    name: "delivery_time",
+    widget: "string",
+    required: false,
+    hint: "Ex: Ate 1 dia util ou A combinar",
   },
   {
     label: "Preco (exibicao)",
@@ -302,10 +319,10 @@ const createProductCollection = (locale) => ({
 });
 
 // Export collections for each locale
-export const products_pt = createProductCollection('pt');
-export const products_en = createProductCollection('en');
-export const products_es = createProductCollection('es');
-export const products_fr = createProductCollection('fr');
+export const products_pt = createProductCollection("pt");
+export const products_en = createProductCollection("en");
+export const products_es = createProductCollection("es");
+export const products_fr = createProductCollection("fr");
 
 // Export all product collections
 export const productCollections = [

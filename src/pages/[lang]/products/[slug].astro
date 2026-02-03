@@ -45,7 +45,7 @@ interface Props {
 }
 
 const { product, lang } = Astro.props;
-const { data } = product;
+const { data } = product as any;
 const { Content } = await product.render();
 
 const seoTitle = data.seo?.title || `${data.name} | Adventury Gaming`;
@@ -53,20 +53,20 @@ const seoDescription = data.seo?.description || data.short_description;
 
 const levelLabels = {
   free: 'Gratuito',
-  basic: 'Basic',
-  intermediate: 'Intermediate',
-  advanced: 'Advanced'
-};
+  basic: 'Creator Pack',
+  custom: 'Personalizado'
+} as const;
 
 const levelBadgeClass = {
   free: 'badge-free',
   basic: 'badge-basic',
-  intermediate: 'badge-intermediate',
-  advanced: 'badge-advanced'
-};
+  custom: 'badge-custom'
+} as const;
 
 // Check if product is free (no checkout needed)
-const isFree = data.product_level === 'free';
+const productData = data as any;
+const isFree = productData.product_level === 'free';
+const purchaseMode = productData.purchase_mode || (isFree ? 'download' : 'checkout');
 ---
 
 <BaseLayout title={seoTitle} description={seoDescription} lang={lang}>
@@ -76,10 +76,10 @@ const isFree = data.product_level === 'free';
       <div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent"></div>
       <div class="container-xl relative">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
-          <div class="space-y-6">
-            <span class={`badge ${levelBadgeClass[data.product_level]}`}>
-              {levelLabels[data.product_level]}
-            </span>
+           <div class="space-y-6">
+              <span class={`badge ${levelBadgeClass[productData.product_level]}`}>
+                {levelLabels[productData.product_level]}
+              </span>
             
             <h1 class="title text-light">
               {data.hero?.headline || data.name}
@@ -91,23 +91,28 @@ const isFree = data.product_level === 'free';
               </p>
             )}
             
-            <div class="flex items-baseline gap-4">
-              {isFree ? (
-                <span class="text-4xl font-bold text-success">Gratis</span>
-              ) : (
-                <span class="text-4xl font-bold text-light">{data.price_display}</span>
-              )}
-              {!isFree && data.currency && (
+             <div class="flex flex-wrap items-baseline gap-4">
+               {isFree ? (
+                 <span class="text-4xl font-bold text-success">Gratis</span>
+               ) : (
+                 <span class="text-4xl font-bold text-light">{data.price_display}</span>
+               )}
+              {purchaseMode === 'checkout' && data.currency && (
                 <span class="text-neutral-500">{data.currency}</span>
               )}
-            </div>
+               {productData.delivery_time && (
+                 <span class="text-neutral-400 text-sm">Entrega: {productData.delivery_time}</span>
+               )}
+             </div>
             
             <div class="flex flex-wrap gap-4 pt-4">
-               {isFree ? (
-                 <a href="#download" class="btn btn-primary btn-lg">
-                   {data.hero?.primary_cta_label || 'Download Gratuito'}
-                 </a>
-              ) : (
+              {purchaseMode === 'download' && (
+                <a href="#download" class="btn btn-primary btn-lg">
+                  {data.hero?.primary_cta_label || 'Download Gratuito'}
+                </a>
+              )}
+
+              {purchaseMode === 'checkout' && (
                 <button 
                   id="buy-button" 
                   class="btn btn-primary btn-lg"
@@ -116,6 +121,12 @@ const isFree = data.product_level === 'free';
                 >
                   {data.hero?.primary_cta_label || 'Comprar Agora'}
                 </button>
+              )}
+
+              {purchaseMode === 'contact' && (
+                <a href="#contact" class="btn btn-primary btn-lg">
+                  {data.hero?.primary_cta_label || 'Solicitar agora'}
+                </a>
               )}
               
               {data.hero?.secondary_cta_label && (
@@ -126,7 +137,7 @@ const isFree = data.product_level === 'free';
             </div>
           </div>
           
-          <div class="product-preview">
+           <div class="product-preview">
             <div class="aspect-video bg-neutral-800 rounded-xl overflow-hidden flex items-center justify-center relative shadow-2xl">
               <img 
                 src={data.thumbnail} 
@@ -140,7 +151,7 @@ const isFree = data.product_level === 'free';
       </div>
     </section>
 
-    <!-- Highlights Section -->
+     <!-- Highlights Section -->
     {data.highlights && data.highlights.length > 0 && (
       <section class="py-16 border-t border-neutral-800">
         <div class="container-xl">
@@ -262,31 +273,43 @@ const isFree = data.product_level === 'free';
     <section class="py-20 border-t border-neutral-800 bg-gradient-to-t from-primary/5 to-transparent" id="download">
       <div class="container-xl text-center">
         <h2 class="text-3xl font-bold text-light mb-4">
-          {isFree ? 'Baixe agora, e gratis!' : 'Pronto para elevar sua stream?'}
+          {purchaseMode === 'download'
+            ? 'Baixe agora, e gratis!'
+            : purchaseMode === 'contact'
+              ? 'Quer um kit com a sua identidade?'
+              : 'Pronto para elevar sua stream?'}
         </h2>
         <p class="text-neutral-400 mb-8 max-w-xl mx-auto">
-          {isFree 
+          {purchaseMode === 'download'
             ? 'Comece sua jornada como streamer com um kit profissional, sem custos.'
-            : `Garanta seu ${data.name} e comece a impressionar sua audiencia hoje.`
+            : purchaseMode === 'contact'
+              ? 'Envie seu briefing e receba um kit sob medida para a sua stream.'
+              : `Garanta seu ${data.name} e comece a impressionar sua audiencia hoje.`
           }
         </p>
         
         <div class="flex flex-wrap justify-center gap-4">
-          {isFree ? (
+          {purchaseMode === 'download' && (
             <a href="#" class="btn btn-primary btn-lg" id="download-free-btn">
               Download Gratuito
             </a>
-          ) : (
-            <>
-              <button 
-                id="buy-button-footer" 
-                class="btn btn-primary btn-lg"
-                data-price-id={data.stripe?.price_id}
-                data-product-slug={product.slug}
-              >
-                Comprar por {data.price_display}
-              </button>
-            </>
+          )}
+
+          {purchaseMode === 'checkout' && (
+            <button 
+              id="buy-button-footer" 
+              class="btn btn-primary btn-lg"
+              data-price-id={data.stripe?.price_id}
+              data-product-slug={product.slug}
+            >
+              Comprar por {data.price_display}
+            </button>
+          )}
+
+          {purchaseMode === 'contact' && (
+            <a href="#contact" class="btn btn-primary btn-lg">
+              Solicitar orcamento
+            </a>
           )}
           
           <a href={localizeUrl('/products', lang)} class="btn btn-ghost btn-lg">
@@ -321,7 +344,7 @@ const isFree = data.product_level === 'free';
       const priceId = btn.getAttribute('data-price-id');
       const productSlug = btn.getAttribute('data-product-slug');
       
-      if (!priceId || priceId === 'price_PLACEHOLDER_BASIC' || priceId === 'price_PLACEHOLDER_INTERMEDIATE' || priceId === 'price_PLACEHOLDER_ADVANCED') {
+      if (!priceId || priceId === 'price_PLACEHOLDER_BASIC') {
         alert('Checkout em breve! Configure o Stripe para habilitar compras.');
         return;
       }

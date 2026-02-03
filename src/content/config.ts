@@ -455,9 +455,11 @@ const products = defineCollection({
     // Basic info
     name: z.string(),
     short_description: z.string(),
-    product_level: z.enum(["free", "basic", "intermediate", "advanced"]),
+    product_level: z.enum(["free", "basic", "custom"]),
     price_display: z.string(),
     currency: z.string().default("BRL"),
+    purchase_mode: z.enum(["download", "checkout", "contact"]).optional(),
+    delivery_time: z.string().optional(),
 
     // Stripe integration
     stripe: z

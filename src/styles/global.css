@@ -176,12 +176,8 @@
   --badge-color: var(--color-info);
 }
 
-.badge-intermediate {
+.badge-custom {
   --badge-color: var(--color-accent);
-}
-
-.badge-advanced {
-  --badge-color: var(--color-primary);
 }
 
 .badge-popular {
