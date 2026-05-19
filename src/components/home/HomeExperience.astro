@@ -97,6 +97,7 @@ const marquee = [
 
       <div class="home-singularity" aria-label="Áreas Adventury em órbita">
         <div class="home-singularity__rings" aria-hidden="true"></div>
+        <div class="home-singularity__aura" aria-hidden="true"></div>
         <video class="home-singularity__video" autoplay muted loop playsinline preload="metadata" poster="/video/black_hole_poster.png" aria-hidden="true">
           <source src="/video/black_hole.mp4" type="video/mp4" />
         </video>
@@ -456,8 +457,9 @@ const marquee = [
   .home-singularity__rings {
     position: absolute;
     inset: 7%;
-    border: 1px solid rgba(32, 216, 255, 0.18);
+    border: 1px solid rgba(32, 216, 255, 0.04);
     border-radius: 50%;
+    animation: spin-rings-clockwise 140s linear infinite;
   }
 
   .home-singularity__rings::before,
@@ -465,13 +467,38 @@ const marquee = [
     content: "";
     position: absolute;
     inset: 12%;
-    border: 1px solid rgba(255, 255, 255, 0.11);
+    border: 1px solid rgba(255, 255, 255, 0.03);
     border-radius: 50%;
+    animation: spin-rings-counter 100s linear infinite;
   }
 
   .home-singularity__rings::after {
     inset: 28%;
-    border-color: rgba(239, 43, 53, 0.24);
+    border: 1px solid rgba(239, 43, 53, 0.04);
+    animation: spin-rings-clockwise 70s linear infinite;
+  }
+
+  /* Accretion disk neon aura - deep atmospheric background gas */
+  .home-singularity__aura {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(92%, 30.5rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: conic-gradient(
+      from 0deg,
+      transparent 20%,
+      rgba(8, 123, 255, 0.16) 45%,
+      rgba(239, 43, 53, 0.14) 65%,
+      transparent 90%
+    );
+    filter: blur(40px);
+    opacity: 0.7;
+    animation: spin-aura 32s linear infinite;
+    pointer-events: none;
+    z-index: 1;
   }
 
   .home-singularity__video {
@@ -485,8 +512,11 @@ const marquee = [
     transform: translate(-50%, -50%);
     filter: saturate(1.35) contrast(1.22) brightness(1.22);
     box-shadow:
-      0 0 90px rgba(8, 123, 255, 0.2),
-      0 0 160px rgba(239, 43, 53, 0.14);
+      0 0 90px rgba(8, 123, 255, 0.22),
+      0 0 160px rgba(239, 43, 53, 0.15);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    animation: gravity-pulse 14s ease-in-out infinite;
+    z-index: 2;
   }
 
   .home-orbit {
@@ -500,44 +530,97 @@ const marquee = [
     text-shadow: 0 0 24px rgba(32, 216, 255, 0.46);
     white-space: nowrap;
     text-decoration: none;
-    transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1), color 240ms ease, text-shadow 240ms ease;
+    transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1), color 280ms ease, text-shadow 280ms ease;
   }
 
   .home-orbit:hover {
     color: var(--home-cyan);
     text-shadow: 0 0 30px rgba(32, 216, 255, 0.9), 0 0 10px rgba(32, 216, 255, 0.5);
+    animation-play-state: paused !important;
   }
 
   .home-orbit--products {
     left: 0;
     top: 18%;
+    animation: float-products 11s ease-in-out infinite;
   }
   .home-orbit--products:hover {
-    transform: translateX(-5px) scale(1.08);
+    transform: scale(1.1) translateX(-4px);
   }
 
   .home-orbit--design {
     right: 2%;
     top: 30%;
+    animation: float-design 13s ease-in-out infinite;
   }
   .home-orbit--design:hover {
-    transform: translateX(5px) scale(1.08);
+    transform: scale(1.1) translateX(4px);
   }
 
   .home-orbit--squad {
     left: 6%;
     bottom: 22%;
+    animation: float-squad 12s ease-in-out infinite;
   }
   .home-orbit--squad:hover {
-    transform: translateX(-5px) scale(1.08);
+    transform: scale(1.1) translateX(-4px);
   }
 
   .home-orbit--support {
     right: 7%;
     bottom: 14%;
+    animation: float-support 14s ease-in-out infinite;
   }
   .home-orbit--support:hover {
-    transform: translateX(5px) scale(1.08);
+    transform: scale(1.1) translateX(4px);
+  }
+
+  /* Subtly animated low-gravity drifting keyframes */
+  @keyframes float-products {
+    0%, 100% { transform: translateY(0px) translateX(0px); }
+    50% { transform: translateY(-4px) translateX(1.5px); }
+  }
+  @keyframes float-design {
+    0%, 100% { transform: translateY(0px) translateX(0px); }
+    50% { transform: translateY(4px) translateX(-2px); }
+  }
+  @keyframes float-squad {
+    0%, 100% { transform: translateY(0px) translateX(0px); }
+    50% { transform: translateY(-3px) translateX(-2px); }
+  }
+  @keyframes float-support {
+    0%, 100% { transform: translateY(0px) translateX(0px); }
+    50% { transform: translateY(3px) translateX(2px); }
+  }
+
+  /* Gravitational waves slow breathing keyframes */
+  @keyframes gravity-pulse {
+    0%, 100% {
+      transform: translate(-50%, -50%) scale(1);
+      box-shadow:
+        0 0 90px rgba(8, 123, 255, 0.22),
+        0 0 160px rgba(239, 43, 53, 0.15);
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(1.01);
+      box-shadow:
+        0 0 115px rgba(8, 123, 255, 0.32),
+        0 0 200px rgba(239, 43, 53, 0.22);
+    }
+  }
+
+  /* Global utility spin keyframes */
+  @keyframes spin-aura {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+  @keyframes spin-rings-clockwise {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes spin-rings-counter {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
   }
 
   .home-marquee {
