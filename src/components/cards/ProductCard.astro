@@ -43,7 +43,7 @@ const levelBadgeClass = {
           class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
         />
-        <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/60 to-transparent"></div>
+        <div class="product-card__media-overlay"></div>
       </div>
 
     <span class={`badge ${levelBadgeClass[productData.product_level]} absolute top-4 left-4`}>
@@ -94,6 +94,23 @@ const levelBadgeClass = {
 
   .product-card__media {
     background-color: rgb(var(--muted-bg));
+  }
+
+  .product-card__media-overlay {
+    @apply absolute inset-0;
+    background: linear-gradient(
+      180deg,
+      rgb(var(--card-bg) / 0) 0%,
+      rgb(var(--card-bg) / 0.18) 100%
+    );
+  }
+
+  :global([data-theme="dark"]) .product-card__media-overlay {
+    background: linear-gradient(
+      180deg,
+      rgb(var(--color-dark) / 0) 0%,
+      rgb(var(--color-dark) / 0.58) 100%
+    );
   }
   
   .product-card__content {

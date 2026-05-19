@@ -48,40 +48,8 @@ const pageDescription = "Kits profissionais para streamers. Starter Pack gratuit
        </div>
      </section>
 
-    <!-- Filters -->
-    <section class="pb-8">
-      <div class="container-xl">
-        <div class="flex flex-wrap gap-2" id="product-filters">
-          <button 
-            class="filter-btn active" 
-            data-filter="all"
-          >
-            Todos
-          </button>
-           <button
-             class="filter-btn"
-             data-filter="free"
-           >
-             Starter Pack
-           </button>
-           <button
-             class="filter-btn"
-             data-filter="basic"
-           >
-             Creator Pack
-           </button>
-           <button
-             class="filter-btn"
-             data-filter="custom"
-           >
-             Personalizado
-           </button>
-        </div>
-      </div>
-    </section>
-
     <!-- Products Grid -->
-    <section class="pb-20">
+    <section class="pt-8 pb-20">
       <div class="container-xl">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="products-grid">
           {products.map((product) => (
@@ -196,7 +164,15 @@ const pageDescription = "Kits profissionais para streamers. Starter Pack gratuit
   }
 
   .products-cta {
-    background: linear-gradient(180deg, rgba(10, 10, 14, 0.6), rgba(6, 6, 9, 0.95));
+    background:
+      radial-gradient(circle at 50% 0%, rgb(var(--color-primary) / 0.08), transparent 45%),
+      linear-gradient(180deg, rgb(var(--card-bg)), rgb(var(--muted-bg)));
+  }
+
+  :global([data-theme="dark"]) .products-cta {
+    background:
+      radial-gradient(circle at 50% 0%, rgb(var(--color-primary) / 0.16), transparent 50%),
+      linear-gradient(180deg, rgb(var(--color-dark) / 0.72), rgb(var(--color-dark)));
   }
 
   .products-compare table {
@@ -214,57 +190,11 @@ const pageDescription = "Kits profissionais para streamers. Starter Pack gratuit
   }
 
   .products-compare tbody tr:hover td {
-    background: rgba(15, 15, 20, 0.4);
+    background: rgb(var(--border) / 0.35);
   }
 
-  .filter-btn {
-    @apply px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200;
-    background-color: rgb(var(--muted-bg));
-    color: rgb(var(--muted-fg));
-  }
-
-  .filter-btn:hover {
-    background-color: rgb(var(--border));
-    color: rgb(var(--fg));
-  }
-
-  .filter-btn.active {
-    background-color: rgb(var(--color-primary));
-    color: rgb(var(--primary-fg));
-  }
-  
   .product-item {
     @apply transition-opacity duration-300;
   }
-  
-  .product-item.is-hidden {
-    display: none;
-  }
 </style>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const productItems = document.querySelectorAll('.product-item');
-    
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const filter = btn.getAttribute('data-filter');
-        
-        // Update active button
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        
-        // Filter products
-        productItems.forEach(item => {
-          const level = item.getAttribute('data-level');
-          if (filter === 'all' || level === filter) {
-            item.classList.remove('is-hidden');
-          } else {
-            item.classList.add('is-hidden');
-          }
-        });
-      });
-    });
-  });
-</script>
