@@ -24,6 +24,17 @@ tmp/
 
 .chrome-light-qa/
 
+.idea/
+
+# Internal product source packs
+product-kits/starter-pack/raw/
+
+tmp/
+
+.chrome-dark-qa/
+
+.chrome-light-qa/
+
 .edge-qa-light/
 
 .edge-qa-light2/
@@ -31,7 +42,12 @@ tmp/
 output/
 
 public/video/*.mp4
+!public/video/black_hole.mp4
+!public/video/square_circle_triangle_x-compact.mp4
+!public/video/square_circle_triangle_x-teaser.mp4
 
 public/video/*.webp
+!public/video/square_circle_triangle_x-poster.webp
 
 *.png
+!public/video/black_hole_poster.png
