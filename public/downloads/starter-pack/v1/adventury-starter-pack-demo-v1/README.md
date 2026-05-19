@@ -7,6 +7,7 @@ Pack de demonstração pronto para usar em cena.
 - 5 cores: `amarelo`, `azul`, `roxo`, `verde`, `vermelho`
 - 3 cenas por cor (`aguardo`, `offline`, `stream`)
 - Apenas arquivos finais em `.png`
+- Template e gerador de colecao para OBS Studio
 - Licenca de uso em `LICENCA.txt`
 
 ## O que não vem
@@ -22,6 +23,10 @@ adventury-starter-pack-demo-v1/
   README.md
   INVENTARIO.txt
   LICENCA.txt
+  obs/
+    README-OBS.md
+    gerar-colecao-obs.ps1
+    Adventury Starter Pack Demo v1.template.json
   assets/
     amarelo/
       01-aguardo.png
@@ -53,6 +58,17 @@ adventury-starter-pack-demo-v1/
 4. Ajuste escala, corte e posição conforme sua cena.
 
 Resolução base: `1920x1080`.
+
+## OBS Studio
+
+Para criar a colecao pronta do OBS:
+
+1. Extraia o ZIP completo.
+2. Abra a pasta `obs`.
+3. Execute `gerar-colecao-obs.ps1`.
+4. Importe o arquivo gerado `Adventury Starter Pack Demo v1.json` no OBS em `Scene Collection > Import`.
+
+O gerador cria 15 cenas, uma para cada combinacao de cor e tipo de tela.
 
 ## Licenca
 

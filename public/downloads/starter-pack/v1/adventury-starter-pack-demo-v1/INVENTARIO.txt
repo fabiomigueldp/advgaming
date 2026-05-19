@@ -23,6 +23,11 @@ Documentacao:
 - README.md
 - LICENCA.txt
 
+Arquivos OBS:
+- obs/README-OBS.md
+- obs/gerar-colecao-obs.ps1
+- obs/Adventury Starter Pack Demo v1.template.json
+
 Exclusões (não incluído no pacote entregue):
 - 22 arquivos fonte em .psd
 - 10 imagens auxiliares de thumbnail da loja (en/pt)

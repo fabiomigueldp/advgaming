@@ -14,3 +14,8 @@ public/_headers
 # IDE
 .vscode/
 .idea/
+
+# Internal product source packs
+product-kits/starter-pack/raw/
+
+tmp/

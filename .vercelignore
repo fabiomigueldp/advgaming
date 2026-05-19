@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.vercel/
+.cache/
+.env
+.env.local
+.env.*.local
+product-kits/starter-pack/raw/
+tmp/
