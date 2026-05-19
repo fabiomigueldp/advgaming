@@ -1,0 +1,427 @@
+---
+const ecosystem = [
+  ["Produtos", "Starter Pack, Creator Pack e kits sob demanda."],
+  ["Squad", "Criadores parceiros, afiliacao e prova real de uso."],
+  ["Servicos", "Design, paginas e materiais para canais em evolucao."],
+  ["Suporte", "Licenca, instalacao, download e continuidade pos-entrega."],
+];
+
+const principles = [
+  ["Acesso", "Criadores pequenos tambem merecem uma base visual organizada."],
+  ["Identidade", "Cada entrega deve ajudar o canal a ser reconhecido mais rapido."],
+  ["Operacao", "Arquivo bonito que nao funciona no OBS nao resolve o problema."],
+  ["Comunidade", "Produto, criador e audiencia precisam se encontrar no mesmo universo."],
+];
+
+const bandTerms = [
+  "Gaming",
+  "Design",
+  "Creators",
+  "Network",
+  "Produtos",
+  "Squad",
+  "Suporte",
+  "Comunidade",
+];
+---
+
+<section class="about-experience" id="top">
+  <div class="about-wrap about-hero">
+    <div>
+      <h1>
+        <span>A rede</span>
+        <span>Adventury</span>
+        <span>para criadores.</span>
+      </h1>
+    </div>
+    <div class="about-lede">
+      <p>
+        Somos a frente gaming da Adventury Corporation: uma operacao que combina produtos
+        digitais, design para streaming, Squad de criadores, suporte e presenca online.
+        O objetivo nao e decorar uma live. E construir base para o criador crescer com
+        clareza, consistencia e comunidade.
+      </p>
+    </div>
+  </div>
+
+  <div class="about-band" aria-label="Gaming, Design, Creators, Network">
+    <div class="about-band__track">
+      <div class="about-band__group">
+        {bandTerms.map((term) => <span>{term}</span>)}
+      </div>
+      <div class="about-band__group" aria-hidden="true">
+        {bandTerms.map((term) => <span>{term}</span>)}
+      </div>
+    </div>
+  </div>
+
+  <div class="about-wrap about-ecosystem">
+    <div class="about-section-heading">
+      <h2>O que existe por tras do nome.</h2>
+      <p>
+        A Adventury Gaming funciona como ecossistema: cada produto, pagina e parceria
+        precisa conversar com as outras partes.
+      </p>
+    </div>
+    <div class="about-ecosystem__diagram">
+      <div class="about-core">
+        <span>Adventury</span>
+        <strong>Gaming</strong>
+      </div>
+      {ecosystem.map(([title, text]) => (
+        <article>
+          <h3>{title}</h3>
+          <p>{text}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+
+  <div class="about-wrap about-principles">
+    <h2>O criterio e simples: parecer profissional sem perder a alma do canal.</h2>
+    <div class="about-principles__list">
+      {principles.map(([title, text]) => (
+        <article>
+          <h3>{title}</h3>
+          <p>{text}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+
+  <div class="about-wrap about-close">
+    <p>
+      A pagina inicial apresenta a promessa. Produtos entregam os kits. O Squad mostra
+      criadores reais. Servicos abrem caminhos sob medida. Suporte garante que a entrega
+      nao morra no download.
+    </p>
+    <div>
+      <a href="/pt/products/">Ver produtos</a>
+      <a href="/pt/squad/">Conhecer o Squad</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-experience {
+    min-height: 100vh;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 16% 12%, rgba(8, 123, 255, 0.22), transparent 30rem),
+      linear-gradient(120deg, rgba(239, 43, 53, 0.18), transparent 46%),
+      #05070b;
+    color: #f6f8fb;
+  }
+
+  .about-wrap {
+    width: min(100% - 2rem, 75rem);
+    margin: 0 auto;
+  }
+
+  .about-hero {
+    min-height: 78vh;
+    display: grid;
+    grid-template-columns: minmax(0, 1.22fr) minmax(20rem, 0.78fr);
+    gap: clamp(2rem, 7vw, 6rem);
+    align-items: end;
+    padding: clamp(7rem, 12vw, 10rem) 0 clamp(4rem, 8vw, 6rem);
+  }
+
+  .about-hero h1,
+  .about-section-heading h2,
+  .about-principles h2 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(3.55rem, 7.8vw, 7rem);
+    font-weight: 950;
+    line-height: 0.86;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .about-hero h1 span {
+    display: block;
+  }
+
+  .about-lede p,
+  .about-section-heading p,
+  .about-ecosystem p,
+  .about-principles p,
+  .about-close p {
+    margin: 0;
+    color: #aeb8ca;
+    font-size: 1.04rem;
+    line-height: 1.75;
+  }
+
+  .about-band {
+    position: relative;
+    overflow: hidden;
+    border-block: 1px solid rgba(174, 184, 202, 0.18);
+    background:
+      linear-gradient(90deg, rgba(5, 7, 11, 0.28), transparent 18%, transparent 82%, rgba(5, 7, 11, 0.28)),
+      #ef2b35;
+  }
+
+  .about-band::before,
+  .about-band::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    z-index: 2;
+    width: min(18vw, 12rem);
+    pointer-events: none;
+  }
+
+  .about-band::before {
+    left: 0;
+    background: linear-gradient(90deg, #ef2b35, rgba(239, 43, 53, 0));
+  }
+
+  .about-band::after {
+    right: 0;
+    background: linear-gradient(270deg, #ef2b35, rgba(239, 43, 53, 0));
+  }
+
+  .about-band__track {
+    display: flex;
+    width: max-content;
+    animation: about-marquee 28s linear infinite;
+    will-change: transform;
+  }
+
+  .about-band:hover .about-band__track {
+    animation-play-state: paused;
+  }
+
+  .about-band__group {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    min-width: max-content;
+  }
+
+  .about-band span {
+    position: relative;
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 1rem clamp(1.4rem, 4vw, 3.5rem);
+    color: #fff;
+    font-size: clamp(1.6rem, 4vw, 3.6rem);
+    font-weight: 950;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .about-band span::after {
+    content: "";
+    position: absolute;
+    right: -0.22rem;
+    top: 50%;
+    width: 0.44rem;
+    height: 0.44rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.72);
+    transform: translateY(-50%);
+  }
+
+  @keyframes about-marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  .about-ecosystem,
+  .about-principles,
+  .about-close {
+    padding: clamp(4rem, 8vw, 7rem) 0;
+  }
+
+  .about-section-heading {
+    display: grid;
+    grid-template-columns: 0.94fr 1.06fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+    margin-bottom: clamp(2rem, 5vw, 4rem);
+  }
+
+  .about-section-heading h2,
+  .about-principles h2 {
+    max-width: 11ch;
+    font-size: clamp(2.8rem, 6.4vw, 6rem);
+  }
+
+  .about-ecosystem__diagram {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid rgba(174, 184, 202, 0.22);
+  }
+
+  .about-core,
+  .about-ecosystem__diagram article {
+    min-height: 17rem;
+    padding: 1.25rem;
+    border-bottom: 1px solid rgba(174, 184, 202, 0.18);
+  }
+
+  .about-core {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background:
+      linear-gradient(135deg, rgba(8, 123, 255, 0.24), rgba(239, 43, 53, 0.18)),
+      rgba(255, 255, 255, 0.03);
+  }
+
+  .about-core span {
+    color: #87bfff;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+
+  .about-core strong {
+    color: #fff;
+    font-size: clamp(3rem, 7vw, 6.2rem);
+    font-weight: 950;
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+
+  .about-ecosystem__diagram article {
+    border-left: 1px solid rgba(174, 184, 202, 0.18);
+  }
+
+  .about-ecosystem h3,
+  .about-principles h3 {
+    margin: 0 0 1rem;
+    color: #fff;
+    font-size: 1.35rem;
+    font-weight: 950;
+  }
+
+  .about-principles {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    border-top: 1px solid rgba(174, 184, 202, 0.18);
+  }
+
+  .about-principles__list {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid rgba(174, 184, 202, 0.2);
+  }
+
+  .about-principles__list article {
+    display: grid;
+    grid-template-columns: 10rem 1fr;
+    gap: 1.5rem;
+    padding: 1.35rem 0;
+    border-bottom: 1px solid rgba(174, 184, 202, 0.18);
+  }
+
+  .about-principles__list h3 {
+    color: #ef2b35;
+  }
+
+  .about-close {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: center;
+    border-top: 1px solid rgba(174, 184, 202, 0.18);
+  }
+
+  .about-close p {
+    max-width: 55rem;
+    color: #fff;
+    font-size: clamp(1.3rem, 2.8vw, 2rem);
+    font-weight: 850;
+    line-height: 1.35;
+  }
+
+  .about-close div {
+    display: flex;
+    gap: 0.8rem;
+  }
+
+  .about-close a {
+    display: inline-flex;
+    min-height: 3.15rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    padding: 0 1.25rem;
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 900;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .about-close a:first-child {
+    border-color: #087bff;
+    background: #087bff;
+  }
+
+  @media (max-width: 900px) {
+    .about-hero,
+    .about-section-heading,
+    .about-principles,
+    .about-close {
+      grid-template-columns: 1fr;
+    }
+
+    .about-ecosystem__diagram {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .about-wrap {
+      width: calc(100vw - 2rem);
+      max-width: calc(100vw - 2rem);
+    }
+
+    .about-hero h1 {
+      max-width: 100%;
+      overflow-wrap: break-word;
+      font-size: clamp(2.9rem, 12.5vw, 3.35rem);
+      line-height: 0.92;
+    }
+
+    .about-lede p {
+      max-width: 21rem;
+    }
+
+    .about-ecosystem__diagram,
+    .about-principles__list article {
+      grid-template-columns: 1fr;
+    }
+
+    .about-core {
+      grid-column: auto;
+    }
+
+    .about-close div,
+    .about-close a {
+      width: 100%;
+      flex-direction: column;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .about-band__track {
+      animation: none;
+    }
+  }
+</style>

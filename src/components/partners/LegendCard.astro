@@ -6,16 +6,10 @@ const { partner, platformIcon } = Astro.props;
 
 const name = partner.data.name;
 const role = partner.data.role;
-const cutout = partner.data.cutout || partner.data.avatar;
+const portrait = partner.data.avatar || partner.data.cutout;
 const handle = partner.data.handle;
 const bio = partner.data.bio;
 const socials = partner.data.socials || [];
-const hasCutout = Boolean(partner.data.cutout);
-const cutoutClass = hasCutout
-  ? "legend-card__cutout"
-  : "legend-card__cutout legend-card__cutout--framed";
-const imageLayout = hasCutout ? "contain" : "fullWidth";
-const imageAspect = hasCutout ? 4 / 5 : 1;
 const platformLabels = {
   twitch: "Twitch",
   youtube: "YouTube",
@@ -29,56 +23,57 @@ const platformLabel = platformLabels[partner.data.platform] || partner.data.plat
 
 <article class="legend-card">
   <div class="legend-card__surface">
-    <div class="legend-card__hud" aria-hidden="true"></div>
-    <div class="legend-card__content">
-      <div class="legend-card__meta">
-        <div class="legend-card__row">
-          <span class="legend-card__badge">Legend</span>
-          <div class="legend-card__platform">
-            <Icon name={platformIcon} class="legend-card__platform-icon" />
-            <span>{platformLabel}</span>
-          </div>
-        </div>
+    <div class="legend-card__portrait" aria-hidden="true">
+      <Picture
+        src={portrait}
+        alt={name}
+        sizes="(min-width: 1024px) 180px, 42vw"
+        aspect={1}
+        layout="fill"
+      />
+    </div>
+
+    <div class="legend-card__meta">
+      <div class="legend-card__platform">
+        <Icon name={platformIcon} class="legend-card__platform-icon" />
+        <span>{platformLabel}</span>
+      </div>
+
+      <div class="legend-card__identity">
         <h3 class="legend-card__name">{name}</h3>
         {handle && <p class="legend-card__handle">{handle}</p>}
-        {role && <p class="legend-card__role">{role}</p>}
-        {bio && <p class="legend-card__bio">{bio}</p>}
-        <div class="legend-card__actions">
-          {partner.data.channel_url && (
-            <a
-              class="btn btn-outline btn-sm legend-card__cta"
-              href={partner.data.channel_url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Ver canal
-            </a>
-          )}
-          {socials.length > 0 && (
-            <div class="legend-card__socials">
-              {socials.map((item) => (
-                <a
-                  class="legend-card__social"
-                  href={item.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={item.platform}
-                >
-                  <Icon name={item.platform} class="legend-card__social-icon" />
-                </a>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
-      <div class={cutoutClass} aria-hidden="true">
-        <Picture
-          src={cutout}
-          alt={name}
-          sizes="(min-width: 1024px) 420px, 70vw"
-          aspect={imageAspect}
-          layout={imageLayout}
-        />
+
+      {role && <p class="legend-card__role">{role}</p>}
+      {bio && <p class="legend-card__bio">{bio}</p>}
+
+      <div class="legend-card__actions">
+        {partner.data.channel_url && (
+          <a
+            class="legend-card__cta"
+            href={partner.data.channel_url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Ver canal
+            <span aria-hidden="true">→</span>
+          </a>
+        )}
+        {socials.length > 0 && (
+          <div class="legend-card__socials">
+            {socials.map((item) => (
+              <a
+                class="legend-card__social"
+                href={item.url}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={item.platform}
+              >
+                <Icon name={item.platform} class="legend-card__social-icon" />
+              </a>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   </div>

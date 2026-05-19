@@ -85,6 +85,7 @@ if(thumbnail && thumbnail.startsWith('/src/assets/')) {
         ? "dark"
         : "light";
       localStorage.setItem("color-scheme", theme);
+      document.querySelector("html").dataset.theme = theme;
     }
   };
   setDarkMode();

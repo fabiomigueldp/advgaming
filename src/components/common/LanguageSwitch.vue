@@ -132,4 +132,16 @@ onUnmounted(() => {
   font-weight: bold;
   color: rgb(var(--color-primary));
 }
+
+@media (max-width: 480px) {
+  .lang-trigger {
+    width: 2rem;
+    padding-inline: 0;
+  }
+
+  .lang-trigger span,
+  .lang-trigger svg:last-child {
+    display: none;
+  }
+}
 </style>

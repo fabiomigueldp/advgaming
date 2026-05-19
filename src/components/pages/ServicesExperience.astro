@@ -1,0 +1,391 @@
+---
+const serviceLines = [
+  {
+    title: "Produtos digitais",
+    text: "Kits prontos, variações visuais e arquivos organizados para criadores que precisam entrar no ar sem depender de um projeto sob medida.",
+    href: "/pt/products/",
+    label: "Explorar kits",
+  },
+  {
+    title: "Projetos sob medida",
+    text: "Identidade, cenas, telas, overlays e peças sociais construídas em cima do canal, do público e da rotina real do criador.",
+    href: "/pt/products/kit-custom/",
+    label: "Ver personalizado",
+  },
+  {
+    title: "Squad e campanhas",
+    text: "Relacionamento com criadores, afiliação, provas reais de uso e presença de marca em comunidades de streaming.",
+    href: "/pt/squad/",
+    label: "Conhecer Squad",
+  },
+  {
+    title: "Web e presença",
+    text: "Páginas, links, materiais de lançamento e pontos de contato que conectam produto, comunidade e conversão.",
+    href: "/pt/support/",
+    label: "Falar com a Adventury",
+  },
+];
+
+const process = [
+  ["Leitura", "Entender canal, maturidade, público, referências e objetivo comercial."],
+  ["Direção", "Definir se o melhor caminho é kit pronto, customização, campanha ou página."],
+  ["Produção", "Criar arquivos, telas, copys e materiais de apoio com consistência visual."],
+  ["Entrega", "Organizar download, licença, instruções e próximos passos de uso."],
+];
+---
+
+<section class="services-experience" id="top">
+  <div class="services-hero services-wrap">
+    <div class="services-title">
+      <p>Adventury Gaming Services</p>
+      <h1>
+        <span>Serviços</span>
+        <span>para o</span>
+        <span>ecossistema</span>
+        <span>criador.</span>
+      </h1>
+    </div>
+    <div class="services-intro">
+      <p>
+        A Adventury Gaming não é só uma fábrica de overlays. Ela organiza produtos,
+        design, comunidade, Squad, suporte e presença digital para criadores que querem
+        evoluir com uma base profissional.
+      </p>
+      <div class="services-hero__actions">
+        <a href="/pt/products/" class="services-action services-action--primary">Ver produtos</a>
+        <a href="/pt/support/" class="services-action">Iniciar conversa</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="services-map services-wrap" aria-label="Mapa de serviços Adventury">
+    <div class="services-map__spine" aria-hidden="true">
+      <span>Gaming</span>
+      <span>Network</span>
+    </div>
+    <div class="services-map__lines">
+      {serviceLines.map((line, index) => (
+        <article class="service-line">
+          <span>{String(index + 1).padStart(2, "0")}</span>
+          <div>
+            <h2>{line.title}</h2>
+            <p>{line.text}</p>
+          </div>
+          <a href={line.href}>{line.label}</a>
+        </article>
+      ))}
+    </div>
+  </div>
+
+  <div class="services-proof">
+    <div class="services-wrap services-proof__inner">
+      <div>
+        <h2>O serviço certo depende do momento do canal.</h2>
+      </div>
+      <p>
+        Um iniciante pode precisar do Starter Pack e de uma instalação limpa. Um criador
+        em crescimento pode precisar de identidade, páginas e campanha. Um parceiro do
+        Squad pode precisar de material recorrente e provas visuais. A página de serviços
+        existe para orientar esse caminho sem empurrar sempre o mesmo pacote.
+      </p>
+    </div>
+  </div>
+
+  <div class="services-process services-wrap">
+    <h2>Como conduzimos</h2>
+    <ol>
+      {process.map(([title, text]) => (
+        <li>
+          <strong>{title}</strong>
+          <p>{text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .services-experience {
+    min-height: 100vh;
+    overflow: hidden;
+    background:
+      linear-gradient(90deg, rgba(239, 43, 53, 0.16), transparent 34%),
+      radial-gradient(circle at 84% 8%, rgba(8, 123, 255, 0.22), transparent 28rem),
+      linear-gradient(180deg, #06080d 0%, #0b0d12 48%, #05070b 100%);
+    color: #f6f8fb;
+  }
+
+  .services-wrap {
+    width: min(100% - 2rem, 75rem);
+    margin: 0 auto;
+  }
+
+  .services-hero {
+    min-height: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(22rem, 0.72fr);
+    gap: clamp(2.5rem, 8vw, 7rem);
+    align-items: center;
+    padding: clamp(5.75rem, 9vw, 7.25rem) 0 clamp(3.5rem, 6vw, 5rem);
+  }
+
+  .services-title p,
+  .services-map__spine span {
+    margin: 0 0 1.2rem;
+    color: #87bfff;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+  }
+
+  .services-title h1,
+  .services-proof h2,
+  .services-process h2 {
+    max-width: 9.6ch;
+    margin: 0;
+    color: #fff;
+    font-size: clamp(3.8rem, 5.7vw, 5.65rem);
+    font-weight: 950;
+    line-height: 0.86;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .services-title h1 span {
+    display: block;
+  }
+
+  .services-intro {
+    position: relative;
+    z-index: 2;
+    max-width: 31rem;
+    padding-bottom: 0.55rem;
+  }
+
+  .services-intro p,
+  .services-proof p,
+  .service-line p,
+  .services-process p {
+    margin: 0;
+    color: #aeb8ca;
+    font-size: 1.04rem;
+    line-height: 1.75;
+  }
+
+  .services-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 2rem;
+  }
+
+  .services-action {
+    display: inline-flex;
+    min-height: 3.15rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    padding: 0 1.25rem;
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  .services-action--primary {
+    border-color: #ef2b35;
+    background: #ef2b35;
+  }
+
+  .services-map {
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    padding: 0 0 clamp(4rem, 8vw, 7rem);
+  }
+
+  .services-map__spine {
+    position: sticky;
+    top: 7rem;
+    height: 22rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-left: 2px solid rgba(239, 43, 53, 0.8);
+    padding-left: 1rem;
+  }
+
+  .services-map__spine span:last-child {
+    color: #ef2b35;
+  }
+
+  .service-line {
+    display: grid;
+    grid-template-columns: 4rem minmax(0, 1fr) auto;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    align-items: start;
+    padding: clamp(1.6rem, 4vw, 2.4rem) 0;
+    border-top: 1px solid rgba(174, 184, 202, 0.22);
+  }
+
+  .service-line:last-child {
+    border-bottom: 1px solid rgba(174, 184, 202, 0.22);
+  }
+
+  .service-line > span {
+    color: #ef2b35;
+    font-size: 0.82rem;
+    font-weight: 950;
+    letter-spacing: 0.18em;
+  }
+
+  .service-line h2 {
+    margin: -0.22rem 0 0.75rem;
+    color: #fff;
+    font-size: clamp(1.7rem, 3.4vw, 3rem);
+    font-weight: 920;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  .service-line a {
+    color: #fff;
+    font-size: 0.84rem;
+    font-weight: 900;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .services-proof {
+    background: #ef2b35;
+    color: #fff;
+  }
+
+  .services-proof__inner {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+    padding: clamp(4rem, 8vw, 7rem) 0;
+  }
+
+  .services-proof h2 {
+    max-width: 11ch;
+    color: #fff;
+    font-size: clamp(2.8rem, 6.4vw, 6rem);
+  }
+
+  .services-proof p {
+    color: #fff;
+    font-size: clamp(1.1rem, 2vw, 1.45rem);
+    font-weight: 700;
+  }
+
+  .services-process {
+    padding: clamp(4rem, 8vw, 7rem) 0;
+  }
+
+  .services-process h2 {
+    max-width: none;
+    font-size: clamp(2.6rem, 6vw, 5.6rem);
+  }
+
+  .services-process ol {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    margin: 2.25rem 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid rgba(174, 184, 202, 0.22);
+  }
+
+  .services-process li {
+    min-height: 15rem;
+    padding: 1.35rem 1.35rem 0 0;
+    border-right: 1px solid rgba(174, 184, 202, 0.18);
+  }
+
+  .services-process li + li {
+    padding-left: 1.35rem;
+  }
+
+  .services-process strong {
+    display: block;
+    margin-bottom: 3.2rem;
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 950;
+  }
+
+  @media (max-width: 900px) {
+    .services-hero,
+    .services-map,
+    .services-proof__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .services-map__spine {
+      position: static;
+      height: auto;
+      flex-direction: row;
+      border-left: 0;
+      border-top: 2px solid rgba(239, 43, 53, 0.8);
+      padding: 1rem 0 0;
+    }
+
+    .service-line {
+      grid-template-columns: 1fr;
+      gap: 0.8rem;
+    }
+
+    .service-line a {
+      white-space: normal;
+    }
+
+    .services-process ol {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .services-wrap {
+      width: calc(100vw - 2rem);
+      max-width: calc(100vw - 2rem);
+    }
+
+    .services-title h1 {
+      max-width: 100%;
+      overflow-wrap: break-word;
+      font-size: clamp(2.45rem, 11vw, 2.75rem);
+      line-height: 0.92;
+    }
+
+    .services-intro p {
+      max-width: 21rem;
+    }
+
+    .services-hero__actions,
+    .services-action {
+      width: 100%;
+    }
+
+    .services-process ol {
+      grid-template-columns: 1fr;
+    }
+
+    .services-process li,
+    .services-process li + li {
+      min-height: auto;
+      padding: 1.25rem 0;
+      border-right: 0;
+      border-bottom: 1px solid rgba(174, 184, 202, 0.18);
+    }
+
+    .services-process strong {
+      margin-bottom: 0.85rem;
+    }
+  }
+</style>

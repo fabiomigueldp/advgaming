@@ -30,171 +30,548 @@ const products = allProducts
 
 const pageTitle = "Streamer Kits";
 const pageDescription = "Kits profissionais para streamers. Starter Pack gratuito, Creator Pack personalizado e kit sob demanda.";
+
+const comparisonRows = [
+  {
+    feature: "Telas inclusas",
+    starter: "3",
+    creator: "5",
+    custom: "Sob demanda",
+  },
+  {
+    feature: "Personalizacao",
+    starter: "Cores inclusas",
+    creator: "Nome do canal",
+    custom: "Completa",
+  },
+  {
+    feature: "Pronto para OBS",
+    starter: "Sim",
+    creator: "Sim",
+    custom: "Sim",
+  },
+  {
+    feature: "Entrega",
+    starter: "Imediata",
+    creator: "Ate 1 dia util",
+    custom: "A combinar",
+  },
+  {
+    feature: "Ideal para",
+    starter: "Iniciantes",
+    creator: "Criadores em crescimento",
+    custom: "Profissionais",
+  },
+];
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription} lang={lang}>
-  <main class="surface-dark min-h-screen">
-    <!-- Hero Section -->
-     <section class="products-hero pt-32 pb-16">
-       <div class="container-xl">
-         <div class="max-w-3xl">
-           <p class="products-hero__eyebrow">Streamer Kits</p>
-           <h1 class="title mb-4" style="color: rgb(var(--fg));">Escolha seu kit, eleve sua stream</h1>
-           <p class="text-xl" style="color: rgb(var(--muted-fg));">
-             Kits profissionais desenvolvidos para streamers em qualquer etapa.
-             Do Starter Pack gratuito ao Creator Pack e opcoes sob demanda.
-           </p>
-         </div>
-       </div>
-     </section>
+<BaseLayout title={pageTitle} description={pageDescription} lang={lang} nav_color="on-dark" page_class="products-canonical-dark">
+  <main class="products-page min-h-screen">
+    <section class="products-stage" id="header">
+      <div class="container-xl products-stage__grid">
+        <div class="products-stage__copy">
+          <h1>Escolha seu kit, eleve sua stream</h1>
+          <p>
+            Tres caminhos para sair do visual improvisado: comece com o Starter Pack gratuito,
+            avance para um pack personalizado ou construa uma identidade sob medida.
+          </p>
+          <div class="products-stage__actions">
+            <a href="#comparison" class="products-btn products-btn--primary">
+              Comparar kits
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-5-5m5 5-5 5" /></svg>
+            </a>
+            <a href={`/${lang}/products/kit-demo/`} class="products-btn products-btn--ghost">
+              Baixar Starter Pack
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" /></svg>
+            </a>
+          </div>
+          <div class="products-stage__notes" aria-label="Diferenciais dos kits">
+            <span>Design para stream</span>
+            <span>Arquivos prontos</span>
+            <span>Escala por etapa</span>
+          </div>
+        </div>
 
-    <!-- Products Grid -->
-    <section class="pt-8 pb-20">
-      <div class="container-xl">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="products-grid">
+        <div class="products-lineup" id="products-grid">
           {products.map((product) => (
             <div class="product-item" data-level={product.data.product_level}>
               <ProductCard product={product} lang={lang} />
             </div>
           ))}
         </div>
-        
-      {products.length === 0 && (
-        <div class="text-center py-20">
-          <p class="text-neutral-500 text-lg">Nenhum produto encontrado.</p>
-        </div>
-      )}
+
+        {products.length === 0 && (
+          <div class="products-empty">
+            <p>Nenhum produto encontrado.</p>
+          </div>
+        )}
       </div>
     </section>
 
-    <!-- Comparison CTA -->
-    <section class="products-cta py-16" style="border-top: 1px solid rgb(var(--border));">
-      <div class="container-xl text-center">
-        <h2 class="text-2xl font-bold mb-4" style="color: rgb(var(--fg));">Nao sabe qual escolher?</h2>
-        <p class="mb-8 max-w-xl mx-auto" style="color: rgb(var(--muted-fg));">
-          Compare os pacotes e escolha o ideal para o seu momento.
-        </p>
-        <a href="#comparison" class="btn btn-outline">
-          Comparar Kits
-        </a>
-      </div>
-    </section>
-
-    <!-- Comparison Table -->
-    <section class="products-compare py-16" id="comparison" style="background-color: rgb(var(--muted-bg));">
+    <section class="products-decision" id="comparison">
       <div class="container-xl">
-        <h2 class="text-2xl font-bold mb-8 text-center" style="color: rgb(var(--fg));">Comparacao de Kits</h2>
-
-         <div class="overflow-x-auto">
-           <table class="w-full text-left comparison-table">
-            <thead>
-              <tr style="border-bottom: 1px solid rgb(var(--border));">
-                <th class="py-4 px-4 font-medium" style="color: rgb(var(--muted-fg));">Recurso</th>
-                <th class="py-4 px-4 text-center" style="color: rgb(var(--color-success));">Starter Pack</th>
-                <th class="py-4 px-4 text-center" style="color: rgb(var(--color-info));">Creator Pack</th>
-                <th class="py-4 px-4 text-center" style="color: rgb(var(--color-accent));">Personalizado</th>
-              </tr>
-            </thead>
-            <tbody class="text-sm">
-              <tr style="border-bottom: 1px solid rgb(var(--border));">
-                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Telas inclusas</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">3</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">5</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Sob demanda</td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgb(var(--border));">
-                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Personalizacao do nome</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--muted-fg));">Nao</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Sim</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Completa</td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgb(var(--border));">
-                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Pronto para OBS</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Sim</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Sim</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Sim</td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgb(var(--border));">
-                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Entrega</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Imediata</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">1 dia util</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">A combinar</td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgb(var(--border));">
-                <td class="py-4 px-4 font-medium" style="color: rgb(var(--fg));">Ideal para</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Iniciantes</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Criadores em crescimento</td>
-                <td class="py-4 px-4 text-center" style="color: rgb(var(--fg));">Profissionais</td>
-              </tr>
-              <tr>
-                <td class="py-4 px-4 font-bold" style="color: rgb(var(--fg));">Preco</td>
-                <td class="py-4 px-4 text-center font-bold" style="color: rgb(var(--color-success));">Gratis</td>
-                <td class="py-4 px-4 text-center font-bold" style="color: rgb(var(--color-info));">R$ 24,90</td>
-                <td class="py-4 px-4 text-center font-bold" style="color: rgb(var(--color-accent));">Sob consulta</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="products-decision__head">
+          <div>
+            <h2>Encontre o kit ideal para sua stream</h2>
+            <p>Compare por etapa, entrega e nivel de personalizacao sem precisar decifrar tabela tecnica.</p>
+          </div>
+          <a href={`/${lang}/products/kit-demo/`} class="products-btn products-btn--ghost">Comecar gratis</a>
         </div>
+
+        <div class="products-matrix" role="table" aria-label="Comparacao de kits">
+          <div class="products-matrix__row products-matrix__row--head" role="row">
+            <div role="columnheader">Recurso</div>
+            <div role="columnheader">Starter Pack</div>
+            <div role="columnheader">Creator Pack</div>
+            <div role="columnheader">Personalizado</div>
+          </div>
+
+          {comparisonRows.map((row) => (
+            <div class="products-matrix__row" role="row">
+              <div class="products-matrix__feature" role="cell">{row.feature}</div>
+              <div role="cell">{row.starter}</div>
+              <div role="cell">{row.creator}</div>
+              <div role="cell">{row.custom}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="products-final">
+      <div class="container-xl products-final__grid">
+        <h2>Nao sabe qual escolher?</h2>
+        <p>Use o Starter Pack para validar o visual agora. Quando o canal crescer, o Creator Pack e o sob medida entram como evolucao natural.</p>
+        <a href={`/${lang}/products/kit-demo/`} class="products-btn products-btn--primary">Baixar Starter Pack</a>
       </div>
     </section>
   </main>
 </BaseLayout>
 
 <style>
-  .products-hero {
-    position: relative;
-    overflow: hidden;
+  :global(.products-canonical-dark) {
+    --bg: 5 7 11;
+    --fg: 245 247 250;
+    --muted-bg: 12 15 22;
+    --muted-fg: 164 176 194;
+    --card-bg: 10 13 19;
+    --card-fg: 245 247 250;
+    --card-border: 37 47 64;
+    --border: 37 47 64;
+    --nav-hover: 255 255 255;
+    background: #05070b;
   }
 
-  .products-hero::before {
+  :global(.products-canonical-dark .nav) {
+    --nav-fg: 255 255 255;
+    --nav-bg: 5 7 11;
+  }
+
+  :global(.products-canonical-dark .nav-link.active) {
+    color: #2f8dff;
+  }
+
+  :global(.products-canonical-dark .nav button[aria-label="Toggle color scheme"]),
+  :global(.products-canonical-dark .floating-cta) {
+    display: none;
+  }
+
+  .products-page {
+    position: relative;
+    overflow: hidden;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.024) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+      radial-gradient(circle at 80% 8%, rgba(239, 43, 53, 0.18), transparent 34rem),
+      radial-gradient(circle at 15% 8%, rgba(8, 123, 255, 0.16), transparent 28rem),
+      #05070b;
+    background-size: 76px 76px, 76px 76px, auto, auto, auto;
+    color: #f6f8fb;
+  }
+
+  .products-page::before {
     content: "";
     position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.2), transparent 60%),
-      radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.15), transparent 55%);
+    inset: 0 0 auto;
+    height: 38rem;
+    background: linear-gradient(180deg, rgba(5, 7, 11, 0), #05070b 92%);
     pointer-events: none;
   }
 
-  .products-hero__eyebrow {
-    text-transform: uppercase;
-    letter-spacing: 0.3em;
-    font-size: 0.75rem;
+  .products-stage {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: grid;
+    align-items: center;
+    padding: clamp(6rem, 9vw, 8rem) 0 clamp(3.5rem, 7vw, 6rem);
+  }
+
+  .products-stage__grid {
+    max-width: min(100% - 2rem, 96rem);
+    display: grid;
+    grid-template-columns: minmax(25rem, 0.75fr) minmax(42rem, 1.35fr);
+    gap: clamp(2rem, 4vw, 4.5rem);
+    align-items: center;
+  }
+
+  .products-stage__copy {
+    max-width: 34rem;
+  }
+
+  .products-stage h1,
+  .products-decision h2,
+  .products-final h2 {
+    margin: 0;
+    font-size: clamp(3rem, 4.8vw, 4.85rem);
+    font-weight: 850;
+    line-height: 0.96;
+    letter-spacing: 0;
+  }
+
+  .products-stage h1 {
+    max-width: 44rem;
+  }
+
+  .products-stage h1::after {
+    content: "";
+    display: block;
+    width: 5rem;
+    height: 0.18rem;
+    margin-top: 1.35rem;
+    background: linear-gradient(90deg, #087bff, #ef2b35);
+  }
+
+  .products-stage p,
+  .products-decision p,
+  .products-final p {
+    margin: 1.45rem 0 0;
     color: rgb(var(--muted-fg));
-    margin-bottom: 0.5rem;
+    font-size: clamp(1rem, 1.55vw, 1.14rem);
+    line-height: 1.65;
   }
 
-  .products-cta {
-    background:
-      radial-gradient(circle at 50% 0%, rgb(var(--color-primary) / 0.08), transparent 45%),
-      linear-gradient(180deg, rgb(var(--card-bg)), rgb(var(--muted-bg)));
+  .products-stage__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin-top: 2rem;
   }
 
-  :global([data-theme="dark"]) .products-cta {
-    background:
-      radial-gradient(circle at 50% 0%, rgb(var(--color-primary) / 0.16), transparent 50%),
-      linear-gradient(180deg, rgb(var(--color-dark) / 0.72), rgb(var(--color-dark)));
+  .products-btn {
+    display: inline-flex;
+    min-height: 3.25rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.5rem;
+    padding: 0 1.15rem;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 850;
+    text-decoration: none;
+    transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
   }
 
-  .products-compare table {
-    border-collapse: collapse;
+  .products-btn:hover {
+    transform: translateY(-2px);
   }
 
-  .products-compare th,
-  .products-compare td {
-    border-bottom: 1px solid rgb(var(--border));
+  .products-btn svg {
+    width: 1.1rem;
+    height: 1.1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
-  .comparison-table th:first-child,
-  .comparison-table td:first-child {
-    width: 30%;
+  .products-btn--primary {
+    border-color: rgba(8, 123, 255, 0.7);
+    background: linear-gradient(135deg, #087bff, #0059d6);
+    box-shadow: 0 22px 60px -32px rgba(8, 123, 255, 0.9);
   }
 
-  .products-compare tbody tr:hover td {
-    background: rgb(var(--border) / 0.35);
+  .products-btn--ghost {
+    background: rgba(7, 10, 16, 0.72);
+  }
+
+  .products-stage__notes {
+    display: grid;
+    gap: 0.65rem;
+    margin-top: 2.4rem;
+    color: rgba(246, 248, 251, 0.74);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .products-stage__notes span {
+    width: max-content;
+    border-left: 2px solid #087bff;
+    padding-left: 0.75rem;
+  }
+
+  .products-lineup {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    perspective: 1200px;
   }
 
   .product-item {
     @apply transition-opacity duration-300;
+  }
+
+  .products-lineup .product-item:nth-child(2) {
+    transform: translateY(1.25rem);
+  }
+
+  .products-lineup .product-item:nth-child(3) {
+    transform: translateY(2.5rem);
+  }
+
+  :global(.products-lineup .product-card) {
+    min-height: clamp(28rem, 47vw, 35rem);
+    background: rgba(8, 11, 17, 0.8);
+  }
+
+  :global(.products-lineup .product-card__title) {
+    font-size: clamp(1.25rem, 1.65vw, 1.75rem);
+  }
+
+  :global(.products-lineup .product-card__price) {
+    white-space: nowrap;
+  }
+
+  :global(.products-lineup .product-card__footer) {
+    flex-wrap: wrap;
+    gap: 0.65rem 0.9rem;
+  }
+
+  :global(.products-lineup .product-card__action) {
+    margin-left: auto;
+  }
+
+  .products-empty {
+    grid-column: 1 / -1;
+    color: rgb(var(--muted-fg));
+  }
+
+  .products-decision {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(74, 91, 120, 0.24);
+    padding: clamp(4rem, 8vw, 7rem) 0;
+    background:
+      radial-gradient(circle at 15% 50%, rgba(8, 123, 255, 0.12), transparent 30rem),
+      rgba(255, 255, 255, 0.018);
+  }
+
+  .products-decision__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2rem;
+    align-items: end;
+    margin-bottom: 2.5rem;
+  }
+
+  .products-decision h2 {
+    max-width: 13ch;
+    font-size: clamp(2.4rem, 5vw, 4.8rem);
+  }
+
+  .products-decision p {
+    max-width: 40rem;
+  }
+
+  .products-matrix {
+    overflow: hidden;
+    border: 1px solid rgba(74, 91, 120, 0.34);
+    border-radius: 0.75rem;
+    background: rgba(8, 11, 17, 0.72);
+    box-shadow: 0 28px 90px -62px rgba(0, 0, 0, 0.95);
+  }
+
+  .products-matrix__row {
+    display: grid;
+    grid-template-columns: 1.15fr repeat(3, minmax(0, 1fr));
+  }
+
+  .products-matrix__row + .products-matrix__row {
+    border-top: 1px solid rgba(74, 91, 120, 0.26);
+  }
+
+  .products-matrix__row > div {
+    min-height: 4.1rem;
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.2rem;
+    color: rgba(246, 248, 251, 0.88);
+    font-weight: 750;
+  }
+
+  .products-matrix__row > div + div {
+    border-left: 1px solid rgba(74, 91, 120, 0.22);
+  }
+
+  .products-matrix__row--head > div {
+    min-height: 4.6rem;
+    color: #fff;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .products-matrix__row--head > div:nth-child(2) {
+    color: #22c55e;
+  }
+
+  .products-matrix__row--head > div:nth-child(3) {
+    color: #2f8dff;
+  }
+
+  .products-matrix__row--head > div:nth-child(4) {
+    color: #fb923c;
+  }
+
+  .products-matrix__feature {
+    color: rgb(var(--muted-fg)) !important;
+  }
+
+  .products-final {
+    border-top: 1px solid rgba(74, 91, 120, 0.24);
+    padding: clamp(3.25rem, 6vw, 5rem) 0;
+    background: linear-gradient(90deg, rgba(239, 43, 53, 0.2), rgba(8, 123, 255, 0.08));
+  }
+
+  .products-final__grid {
+    display: grid;
+    grid-template-columns: 0.8fr 1fr auto;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .products-final h2 {
+    font-size: clamp(2rem, 3vw, 3rem);
+  }
+
+  .products-final p {
+    margin: 0;
+  }
+
+  @media (max-width: 1100px) {
+    .products-stage__grid,
+    .products-final__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .products-stage h1 {
+      max-width: 14ch;
+    }
+
+    .products-lineup .product-item {
+      transform: none !important;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .products-lineup {
+      grid-template-columns: 1fr;
+    }
+
+    .products-decision__head {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+
+    .products-matrix__row {
+      min-width: 0;
+    }
+
+    .products-stage__actions,
+    .products-btn {
+      width: 100%;
+    }
+
+    .products-matrix {
+      display: grid;
+      gap: 0.85rem;
+      overflow: visible;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .products-matrix__row--head {
+      display: none;
+    }
+
+    .products-matrix__row {
+      grid-template-columns: 1fr;
+      overflow: hidden;
+      border: 1px solid rgba(74, 91, 120, 0.34);
+      border-radius: 0.65rem;
+      background: rgba(8, 11, 17, 0.78);
+    }
+
+    .products-matrix__row + .products-matrix__row {
+      border-top: 1px solid rgba(74, 91, 120, 0.34);
+    }
+
+    .products-matrix__row > div {
+      min-height: 0;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.8rem 0.95rem;
+      font-size: 0.84rem;
+    }
+
+    .products-matrix__row > div + div {
+      border-top: 1px solid rgba(74, 91, 120, 0.18);
+      border-left: 0;
+    }
+
+    .products-matrix__feature {
+      color: #fff !important;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .products-matrix__row > div:nth-child(n + 2)::before {
+      flex: 0 0 auto;
+      color: rgb(var(--muted-fg));
+      font-size: 0.66rem;
+      font-weight: 850;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .products-matrix__row > div:nth-child(2)::before {
+      content: "Starter";
+      color: #22c55e;
+    }
+
+    .products-matrix__row > div:nth-child(3)::before {
+      content: "Creator";
+      color: #2f8dff;
+    }
+
+    .products-matrix__row > div:nth-child(4)::before {
+      content: "Sob medida";
+      color: #fb923c;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .products-stage h1 {
+      font-size: clamp(2.75rem, 15vw, 4.2rem);
+      max-width: 10ch;
+    }
   }
 </style>
 

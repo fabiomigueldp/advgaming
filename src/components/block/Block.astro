@@ -11,12 +11,28 @@ import Faqs from "./Faqs.astro";
 import StatsCounter from "./StatsCounter.astro";
 import Testimonials from "./Testimonials.astro";
 import TrustBadges from "./TrustBadges.astro";
+import HomeExperience from "@components/home/HomeExperience.astro";
+import ServicesExperience from "@components/pages/ServicesExperience.astro";
+import AboutExperience from "@components/pages/AboutExperience.astro";
+import SupportExperience from "@components/pages/SupportExperience.astro";
 
 const { slot, ...props } = Astro.props;
+
+const customExperienceComponents = [
+  "HomeExperience",
+  "ServicesExperience",
+  "AboutExperience",
+  "SupportExperience",
+];
 ---
 
+{props.component === "HomeExperience" && <HomeExperience {...props} />}
+{props.component === "ServicesExperience" && <ServicesExperience {...props} />}
+{props.component === "AboutExperience" && <AboutExperience {...props} />}
+{props.component === "SupportExperience" && <SupportExperience {...props} />}
+
 {
-  props.component !== "AnnoyingPopup" && (
+  props.component !== "AnnoyingPopup" && !customExperienceComponents.includes(props.component) && (
     <Intersecting
       client:visible
       className={` ${props?.style?.surface || ""} ${
@@ -29,7 +45,7 @@ const { slot, ...props } = Astro.props;
       {props.component === "RichText" && <RichText {...props} />}
       {props.component === "Features" && <Features {...props} />}
       {props.component === "PricingTable" && <PricingTable {...props} />}
-      {props.component === "Faq" && <Faqs {...props} />}
+      {(props.component === "Faq" || props.component === "Faqs") && <Faqs {...props} />}
       {props.component === "StatsCounter" && <StatsCounter {...props} />}
       {props.component === "Testimonials" && <Testimonials {...props} />}
       {props.component === "TrustBadges" && <TrustBadges {...props} />}

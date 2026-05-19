@@ -145,9 +145,6 @@ function onLeave(el) {
 }
 .faq-grid {
   @apply grid gap-2;
-
-  @screen md {
-    grid-template-columns: 3fr 1fr;
-  }
+  grid-template-columns: 1fr;
 }
 </style>

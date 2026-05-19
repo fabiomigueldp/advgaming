@@ -19,3 +19,19 @@ public/_headers
 product-kits/starter-pack/raw/
 
 tmp/
+
+.chrome-dark-qa/
+
+.chrome-light-qa/
+
+.edge-qa-light/
+
+.edge-qa-light2/
+
+output/
+
+public/video/*.mp4
+
+public/video/*.webp
+
+*.png

@@ -1,0 +1,303 @@
+---
+const topics = [
+  ["Download", "Nao recebeu, perdeu o arquivo ou precisa de um novo link.", "#respostas"],
+  ["Instalacao", "Como abrir o pack, usar no OBS e evitar caminhos quebrados.", "#instalacao"],
+  ["Licenca", "O que pode usar em live, redes, monetizacao e projetos de terceiros.", "#respostas"],
+  ["Produto", "Duvidas sobre Starter Pack, Creator Pack ou kit personalizado.", "#contato"],
+];
+
+const obsSteps = [
+  "Baixe o arquivo pelo link oficial do produto.",
+  "Extraia a pasta completa antes de abrir qualquer imagem.",
+  "Guarde o pack em uma pasta fixa, fora de Downloads temporarios.",
+  "No OBS, adicione as telas como fontes de imagem ou importe a colecao quando disponivel.",
+  "Teste a resolucao 1920x1080 e confira se nada ficou fora da cena.",
+];
+
+const answers = [
+  ["Nao recebi meu download", "Verifique spam, promocoes e o email usado na compra. Se ainda nao encontrar, envie o email de compra e o produto solicitado."],
+  ["Meu OBS nao mostra a imagem", "Normalmente e caminho quebrado. Extraia novamente o pack, mova para uma pasta fixa e religue a fonte de imagem no OBS."],
+  ["Posso usar em live monetizada?", "Sim, no seu proprio canal, seguindo a licenca do produto. Redistribuicao e revenda nao fazem parte da licenca padrao."],
+  ["Preciso de algo personalizado", "Use o contato de suporte com referencias, nome do canal, plataformas e prazo. A equipe direciona para servico sob medida."],
+];
+---
+
+<section class="support-experience" id="top">
+  <div class="support-wrap support-hero">
+    <div>
+      <h1>Suporte sem teatro.</h1>
+      <p>
+        Esta pagina existe para resolver o caminho entre compra, download, instalacao,
+        licenca e uso real dos produtos Adventury Gaming. Sem painel falso, sem promessa
+        de atendimento instantaneo: contexto claro acelera a resposta.
+      </p>
+    </div>
+    <nav class="support-index" aria-label="Assuntos de suporte">
+      {topics.map(([title, text, href]) => (
+        <a href={href}>
+          <strong>{title}</strong>
+          <span>{text}</span>
+        </a>
+      ))}
+    </nav>
+  </div>
+
+  <div class="support-strip">
+    <div class="support-wrap">
+      <p>Antes de chamar suporte, tenha em maos: produto, email usado, print do problema, software e sistema operacional.</p>
+    </div>
+  </div>
+
+  <div class="support-wrap support-guide">
+    <section id="instalacao">
+      <h2>Instalacao no OBS</h2>
+      <ol>
+        {obsSteps.map((step) => <li>{step}</li>)}
+      </ol>
+    </section>
+
+    <aside id="contato">
+      <h2>Contato direto</h2>
+      <p>
+        Para casos que dependem da equipe, envie uma mensagem objetiva. Quanto mais completo
+        for o contexto, menor a chance de uma rodada extra de perguntas.
+      </p>
+      <a href="mailto:suporte@adventurygaming.com?subject=Suporte%20Adventury%20Gaming">suporte@adventurygaming.com</a>
+    </aside>
+  </div>
+
+  <div class="support-wrap support-answers" id="respostas">
+    <h2>Problemas comuns</h2>
+    <div>
+      {answers.map(([question, answer]) => (
+        <details>
+          <summary>{question}</summary>
+          <p>{answer}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+
+  <div class="support-wrap support-final">
+    <p>
+      Se a duvida for sobre escolha de produto, comece pela pagina de produtos. Se for sobre
+      uma entrega ja baixada, comece pelo nome do arquivo e pelo print do erro.
+    </p>
+    <a href="/pt/products/">Comparar produtos</a>
+  </div>
+</section>
+
+<style>
+  .support-experience {
+    min-height: 100vh;
+    overflow: hidden;
+    background:
+      linear-gradient(180deg, #f4f6fa 0%, #ffffff 46%, #f4f6fa 100%);
+    color: #05070b;
+  }
+
+  .support-wrap {
+    width: min(100% - 2rem, 75rem);
+    margin: 0 auto;
+  }
+
+  .support-hero {
+    min-height: 78vh;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 28rem);
+    gap: clamp(2rem, 7vw, 6rem);
+    align-items: end;
+    padding: clamp(7rem, 12vw, 10rem) 0 clamp(4rem, 8vw, 6rem);
+  }
+
+  .support-hero h1,
+  .support-guide h2,
+  .support-answers h2 {
+    max-width: 9ch;
+    margin: 0;
+    color: #05070b;
+    font-size: clamp(4rem, 9vw, 8rem);
+    font-weight: 950;
+    line-height: 0.84;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .support-hero p,
+  .support-index span,
+  .support-guide p,
+  .support-answers p,
+  .support-final p {
+    margin: 1.5rem 0 0;
+    color: #4d596b;
+    font-size: 1.04rem;
+    line-height: 1.72;
+  }
+
+  .support-index {
+    border-top: 2px solid #05070b;
+  }
+
+  .support-index a {
+    display: grid;
+    gap: 0.35rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid rgba(5, 7, 11, 0.18);
+    color: #05070b;
+    text-decoration: none;
+  }
+
+  .support-index strong {
+    font-size: 1.15rem;
+    font-weight: 950;
+  }
+
+  .support-index span {
+    margin: 0;
+    font-size: 0.94rem;
+  }
+
+  .support-strip {
+    background: #05070b;
+  }
+
+  .support-strip p {
+    margin: 0;
+    padding: 1rem 0;
+    color: #fff;
+    font-weight: 850;
+  }
+
+  .support-guide {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    padding: clamp(4rem, 8vw, 7rem) 0;
+  }
+
+  .support-guide h2,
+  .support-answers h2 {
+    max-width: 11ch;
+    font-size: clamp(2.8rem, 6.5vw, 6rem);
+  }
+
+  .support-guide ol {
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+    border-top: 1px solid rgba(5, 7, 11, 0.18);
+  }
+
+  .support-guide li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 4rem 1fr;
+    gap: 1.25rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid rgba(5, 7, 11, 0.16);
+    color: #111827;
+    font-weight: 750;
+    line-height: 1.55;
+  }
+
+  .support-guide li::before {
+    content: counter(step, decimal-leading-zero);
+    color: #ef2b35;
+    font-size: 0.82rem;
+    font-weight: 950;
+    letter-spacing: 0.16em;
+  }
+
+  .support-guide aside {
+    align-self: start;
+    border-left: 2px solid #ef2b35;
+    padding-left: 1.5rem;
+  }
+
+  .support-guide aside h2 {
+    font-size: clamp(2.2rem, 4vw, 3.6rem);
+  }
+
+  .support-guide a,
+  .support-final a {
+    display: inline-flex;
+    min-height: 3.1rem;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.5rem;
+    border-radius: 999px;
+    padding: 0 1.25rem;
+    background: #ef2b35;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 950;
+    text-decoration: none;
+  }
+
+  .support-answers {
+    padding: clamp(4rem, 8vw, 7rem) 0;
+    border-top: 1px solid rgba(5, 7, 11, 0.14);
+  }
+
+  .support-answers > div {
+    margin-top: 2rem;
+    border-top: 1px solid rgba(5, 7, 11, 0.2);
+  }
+
+  .support-answers details {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid rgba(5, 7, 11, 0.16);
+  }
+
+  .support-answers summary {
+    cursor: pointer;
+    color: #05070b;
+    font-size: clamp(1.25rem, 2.5vw, 2rem);
+    font-weight: 900;
+  }
+
+  .support-answers p {
+    max-width: 48rem;
+  }
+
+  .support-final {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: center;
+    padding: 0 0 clamp(5rem, 8vw, 7rem);
+  }
+
+  .support-final p {
+    max-width: 52rem;
+    color: #05070b;
+    font-size: clamp(1.25rem, 2.8vw, 2rem);
+    font-weight: 850;
+    line-height: 1.35;
+  }
+
+  @media (max-width: 900px) {
+    .support-hero,
+    .support-guide,
+    .support-final {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .support-hero h1 {
+      font-size: clamp(3.3rem, 17vw, 4.8rem);
+    }
+
+    .support-guide li {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+
+    .support-guide a,
+    .support-final a {
+      width: 100%;
+    }
+  }
+</style>

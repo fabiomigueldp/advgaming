@@ -1,5 +1,6 @@
 ---
 import Picture from "@components/media/Picture.astro";
+import heroNetworkLoop from "@assets/hero-network-loop.webp";
 
 const {
   title = "Streamers que definem o jogo",
@@ -9,8 +10,9 @@ const {
   cta_href = "#recruitment",
   secondary_label = "Ver o roster",
   secondary_href = "#roster",
-  video = "/video/square_circle_triangle_x.mp4",
+  video = "/video/square_circle_triangle_x-compact.mp4",
   poster = "/src/assets/hero-network-loop.webp",
+  videoPoster = heroNetworkLoop.src,
 } = Astro.props;
 ---
 
@@ -23,7 +25,7 @@ const {
       loop
       playsinline
       preload="metadata"
-      poster={poster}
+      poster={videoPoster}
       aria-hidden="true"
     >
       <source src={video} type="video/mp4" />

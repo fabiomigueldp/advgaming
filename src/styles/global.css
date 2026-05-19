@@ -93,22 +93,22 @@
   /* Dark theme (default gaming feel) */
   [data-theme="dark"] {
     --color-primary: 239 68 68;
-    --color-secondary: 38 38 38;
+    --color-secondary: 31 31 36;
     --color-accent: 251 146 60;
     --color-warning: 245 158 11;
     --color-danger: 239 68 68;
     --color-success: 34 197 94;
     --color-info: 59 130 246;
-    --color-dark: 10 10 10;
+    --color-dark: 18 18 21;
     --color-light: 250 250 250;
-    --bg: 10 10 10;
+    --bg: 18 18 22;
     --fg: 245 245 245;
-    --muted-bg: 24 24 27;
+    --muted-bg: 25 26 32;
     --muted-fg: 161 161 170;
-    --card-bg: 17 17 19;
+    --card-bg: 30 31 38;
     --card-fg: 245 245 245;
-    --card-border: 39 39 42;
-    --border: 39 39 42;
+    --card-border: 55 56 66;
+    --border: 45 46 54;
     --primary: var(--color-primary);
     --primary-fg: 255 255 255;
     --nav-on-light: 17 17 17;
@@ -264,17 +264,17 @@ body {
 }
 
 [data-theme="light"] .surface-dark {
-  background-color: rgb(var(--muted-bg));
+  background-color: rgb(245 245 247);
   color: rgb(var(--fg));
 }
 
 .surface-darker {
   @apply text-light;
-  background-color: rgb(0 0 0);
+  background-color: rgb(12 12 14);
 }
 
 [data-theme="light"] .surface-darker {
-  background-color: rgb(var(--muted-bg));
+  background-color: rgb(238 238 241);
   color: rgb(var(--fg));
 }
 
@@ -289,6 +289,12 @@ body {
   background-color: rgb(var(--color-dark));
 }
 
+[data-theme="dark"] .hero-dark {
+  background:
+    radial-gradient(circle at 50% 0%, rgb(42 43 50 / 0.55), transparent 46%),
+    linear-gradient(180deg, rgb(23 23 27), rgb(var(--color-dark)));
+}
+
 .surface-muted {
   background-color: rgb(var(--muted-bg));
   color: rgb(var(--fg));
@@ -297,6 +303,14 @@ body {
 .surface-overlay {
   background-color: rgb(var(--card-bg));
   color: rgb(var(--card-fg));
+}
+
+.surface-base-overlay {
+  background-color: rgb(var(--card-bg));
+  color: rgb(var(--card-fg));
+  border: 1px solid rgb(var(--card-border));
+  border-radius: var(--radius);
+  box-shadow: 0 18px 42px -34px rgb(var(--shadow-color) / 0.55);
 }
 
 .surface-footer {
@@ -545,6 +559,7 @@ body {
 .btn {
   @apply relative inline-flex items-center justify-center gap-2 overflow-hidden whitespace-nowrap px-6 py-3 text-sm font-semibold outline-offset-4 transition-all duration-200 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary/60 disabled:pointer-events-none disabled:opacity-50 disabled:grayscale;
   border-radius: var(--radius);
+  --btn-secondary-fg: 185 28 28;
 
   &:before {
     content: "";
@@ -567,10 +582,11 @@ body {
   &-secondary {
     border: 2px solid rgb(var(--color-primary)) !important;
     background-color: white !important;
-    color: rgb(var(--color-primary)) !important;
+    color: rgb(var(--btn-secondary-fg)) !important;
 
     &:hover {
-      background-color: rgb(var(--color-primary) / 0.1) !important;
+      background-color: rgb(185 28 28 / 0.12) !important;
+      color: rgb(var(--btn-secondary-fg)) !important;
     }
   }
 
@@ -590,12 +606,12 @@ body {
   }
 
   &-outline-primary {
-    border: 2px solid rgb(var(--color-primary)) !important;
-    color: rgb(var(--color-primary)) !important;
+    border: 2px solid rgb(185 28 28) !important;
+    color: rgb(185 28 28) !important;
     background-color: white !important;
 
     &:hover {
-      background-color: rgb(var(--color-primary) / 0.1) !important;
+      background-color: rgb(185 28 28 / 0.12) !important;
     }
   }
 
@@ -603,6 +619,7 @@ body {
   .surface-primary &-secondary,
   .surface-primary &-outline-primary {
     background-color: white !important;
+    color: rgb(var(--btn-secondary-fg)) !important;
   }
 
   &-ghost {
@@ -771,6 +788,18 @@ body {
   }
 }
 
+@media (max-width: 480px) {
+  .lang-trigger {
+    width: 2rem;
+    padding-inline: 0;
+  }
+
+  .lang-trigger span,
+  .lang-trigger svg:last-child {
+    display: none;
+  }
+}
+
 .btn-to-top {
   @apply pointer-events-none scale-90 opacity-0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -866,4 +895,30 @@ select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
   -webkit-text-fill-color: theme(colors.primary);
   transition: background-color 5000s ease-in-out 0s;
+}
+
+body.service-page-canonical,
+body.about-page-canonical {
+  background: #05070b;
+}
+
+body.support-page-canonical {
+  background: #f4f6fa;
+}
+
+body.service-page-canonical .nav button[aria-label="Toggle color scheme"],
+body.about-page-canonical .nav button[aria-label="Toggle color scheme"],
+body.support-page-canonical .nav button[aria-label="Toggle color scheme"] {
+  display: none;
+}
+
+body.service-page-canonical .nav,
+body.about-page-canonical .nav {
+  --nav-hover: 255 255 255;
+}
+
+body.support-page-canonical .nav {
+  --nav-fg: 17 17 17;
+  --nav-bg: 244 246 250;
+  --nav-hover: 17 17 17;
 }

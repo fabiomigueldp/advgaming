@@ -12,12 +12,15 @@ const urlLang = Astro.url.pathname.split('/').filter(Boolean)[0];
 const lang = getValidLocale(propsLang || urlLang || DEFAULT_LOCALE);
 
 const hasBlocks = blocks && blocks.length > 0;
+const skipHero = style?.hero_template === "none";
 ---
 
 <BaseLayout {title} {description} {...style} {thumbnail} {og_image} {lang}>
-  <HeroFunnel {...props}>
-    <slot name="hero" />
-  </HeroFunnel>
+  {!skipHero && (
+    <HeroFunnel {...props}>
+      <slot name="hero" />
+    </HeroFunnel>
+  )}
 
   <div class="relative w-full" id="more">
     <div

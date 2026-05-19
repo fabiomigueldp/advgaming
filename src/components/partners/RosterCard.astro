@@ -21,22 +21,35 @@ const platformLabel = platformLabels[partner.data.platform] || partner.data.plat
 ---
 
 <article class="roster-card">
-  <div class="roster-card__media">
+  <div class="roster-card__avatar" aria-hidden="true">
     <Picture
       src={avatar}
       alt={name}
-      sizes="(min-width: 1024px) 240px, 50vw"
+      sizes="96px"
       aspect={1}
-      layout="fullWidth"
+      layout="fill"
     />
-    <div class="roster-card__glow"></div>
   </div>
+
   <div class="roster-card__body">
     <div class="roster-card__top">
       <div class="roster-card__platform">
         <Icon name={platformIcon} class="roster-card__platform-icon" />
         <span>{platformLabel}</span>
       </div>
+      {product?.data?.name && <span class="roster-card__kit">{product.data.name}</span>}
+    </div>
+
+    <h3 class="roster-card__name">{name}</h3>
+    <div class="roster-card__meta-line">
+      {handle && <span class="roster-card__handle">{handle}</span>}
+      {role && <span class="roster-card__role">{role}</span>}
+    </div>
+    {bio && <p class="roster-card__bio">{bio}</p>}
+  </div>
+
+  <div class="roster-card__actions">
+    {partner.data.channel_url ? (
       <a
         class="roster-card__channel"
         href={partner.data.channel_url}
@@ -45,14 +58,13 @@ const platformLabel = platformLabels[partner.data.platform] || partner.data.plat
       >
         Ver canal
       </a>
-    </div>
-    <h3 class="roster-card__name">{name}</h3>
-    {handle && <p class="roster-card__handle">{handle}</p>}
-    {role && <p class="roster-card__role">{role}</p>}
-    {bio && <p class="roster-card__bio">{bio}</p>}
-    {socials.length > 0 ? (
+    ) : (
+      <span class="roster-card__pending">Links em breve</span>
+    )}
+
+    {socials.length > 0 && (
       <div class="roster-card__socials">
-        {socials.map((item) => (
+        {socials.slice(0, 4).map((item) => (
           <a
             class="roster-card__social"
             href={item.url}
@@ -64,8 +76,6 @@ const platformLabel = platformLabels[partner.data.platform] || partner.data.plat
           </a>
         ))}
       </div>
-    ) : (
-      <span class="roster-card__pending">Links em breve</span>
     )}
   </div>
 </article>

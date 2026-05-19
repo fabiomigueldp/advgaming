@@ -48,7 +48,7 @@
         v-show="show"
       >
         <a :href="getLocalizedPath('/')" class="mx-auto max-w-[12rem] pt-10">
-          <slot name="logo" />
+          <slot v-if="$slots.logo" name="logo" />
         </a>
 
         <div class="mobile-links mt-3 w-full text-center" slot="links">
@@ -83,7 +83,7 @@
           </a>
         </div>
 
-        <slot name="social" />
+        <slot v-if="$slots.social" name="social" />
       </div>
     </transition>
   </span>
