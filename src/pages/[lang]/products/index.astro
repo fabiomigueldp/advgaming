@@ -1,12 +1,12 @@
 ---
 /**
  * Products Listing Page
- * Displays all products with filtering options
+ * Displays the current product lineup.
  */
 import { getCollection } from "astro:content";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import ProductCard from "@components/cards/ProductCard.astro";
-import { SUPPORTED_LOCALES, DEFAULT_LOCALE, type SupportedLocale } from "@util/translate";
+import { SUPPORTED_LOCALES, type SupportedLocale } from "@util/translate";
 
 export async function getStaticPaths() {
   const paths = SUPPORTED_LOCALES.map((locale) => ({

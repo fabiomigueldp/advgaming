@@ -1,0 +1,62 @@
+Licenca de Uso - Adventury Starter Pack Demo v1
+Ultima atualizacao: 2026-05-19
+
+Ao baixar e usar este pacote, voce recebe uma licenca nao exclusiva, mundial e perpetua para usar os arquivos finais do Adventury Starter Pack Demo v1 de acordo com estes termos.
+
+1. O que esta licenciado
+
+Esta licenca cobre somente os arquivos finais em PNG incluidos neste pacote:
+
+- 5 variacoes de cor: amarelo, azul, roxo, verde e vermelho
+- 3 telas por cor: aguardando, offline e stream
+- Arquivos finais em 1920x1080
+
+Arquivos editaveis, PSDs, fontes, matrizes de producao, paletas internas, scripts e arquivos auxiliares nao fazem parte desta entrega.
+
+2. Usos permitidos
+
+Voce pode:
+
+- Usar as telas nas suas proprias transmissoes ao vivo.
+- Usar as telas em videos gravados publicados nos seus canais.
+- Usar as telas em conteudo monetizado, incluindo anuncios, inscricoes, doacoes e patrocinios.
+- Usar o pacote em mais de um canal proprio.
+- Ajustar escala, corte, posicionamento, cor e composicao dentro do seu software de transmissao ou edicao.
+- Combinar as telas com outros elementos visuais da sua propria marca.
+
+3. Usos proibidos
+
+Voce nao pode:
+
+- Vender, revender, sublicenciar, alugar ou redistribuir este pacote.
+- Compartilhar os arquivos originais com terceiros, publicamente ou em grupos privados.
+- Disponibilizar o pacote em sites de download, marketplaces, packs, templates ou bibliotecas de assets.
+- Incluir estes arquivos em outro produto distribuido ou vendido a terceiros.
+- Usar os arquivos para criar trabalhos para clientes sem licenca adicional da Adventury Gaming.
+- Registrar como marca, produto proprio ou identidade exclusiva qualquer elemento visual deste pacote.
+- Usar o pacote em conteudo ilegal, difamatorio ou que viole direitos de terceiros.
+
+4. Produto gratuito
+
+Este pacote e gratuito, mas continua protegido por direitos autorais. O fato de ser gratuito nao permite redistribuicao, revenda ou sublicenciamento.
+
+5. Sem garantia
+
+O pacote e fornecido "como esta". A Adventury Gaming nao garante compatibilidade com todos os softwares, plataformas, plugins, configuracoes de cena ou necessidades especificas de cada canal.
+
+6. Encerramento da licenca
+
+Se voce violar estes termos, sua licenca de uso sera encerrada automaticamente. Nesse caso, voce deve parar de usar o pacote e apagar as copias dos arquivos.
+
+7. Duvidas e licenca estendida
+
+Para usos nao cobertos por esta licenca, incluindo trabalhos para clientes, distribuicao em projetos de terceiros ou acordos comerciais especificos, entre em contato com a Adventury Gaming.
+
+Resumo rapido:
+
+- Pode usar nas suas lives e videos: sim
+- Pode usar em canais monetizados: sim
+- Pode editar para uso proprio: sim
+- Pode compartilhar o ZIP ou arquivos originais: nao
+- Pode revender ou incluir em outro produto: nao
+- Pode usar em trabalhos para clientes: somente com licenca adicional

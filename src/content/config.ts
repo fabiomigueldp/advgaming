@@ -458,6 +458,7 @@ const products = defineCollection({
     product_level: z.enum(["free", "basic", "custom"]),
     price_display: z.string(),
     currency: z.string().default("BRL"),
+    download_url: z.string().optional(),
     purchase_mode: z.enum(["download", "checkout", "contact"]).optional(),
     delivery_time: z.string().optional(),
 

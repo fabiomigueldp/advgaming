@@ -1,0 +1,30 @@
+Adventury Starter Pack - Demo v1 - Inventário de Entrega
+Atualizado em: 2026-05-19
+
+Arquivos incluídos:
+Cor\Cena\Arquivo\Tamanho(bytes)
+amarelo\aguardo\01-aguardo.png\430776
+amarelo\offline\02-offline.png\481825
+amarelo\stream\03-stream.png\145856
+azul\aguardo\01-aguardo.png\388650
+azul\offline\02-offline.png\494000
+azul\stream\03-stream.png\126354
+roxo\aguardo\01-aguardo.png\416523
+roxo\offline\02-offline.png\508915
+roxo\stream\03-stream.png\147036
+verde\aguardo\01-aguardo.png\411871
+verde\offline\02-offline.png\401583
+verde\stream\03-stream.png\136504
+vermelho\aguardo\01-aguardo.png\405014
+vermelho\offline\02-offline.png\416206
+vermelho\stream\03-stream.png\200516
+
+Documentacao:
+- README.md
+- LICENCA.txt
+
+Exclusões (não incluído no pacote entregue):
+- 22 arquivos fonte em .psd
+- 10 imagens auxiliares de thumbnail da loja (en/pt)
+- Códigos/scripts de preview e build
+- Paletas e matrizes de produção

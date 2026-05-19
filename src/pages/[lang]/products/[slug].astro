@@ -67,10 +67,15 @@ const levelBadgeClass = {
 const productData = data as any;
 const isFree = productData.product_level === 'free';
 const purchaseMode = productData.purchase_mode || (isFree ? 'download' : 'checkout');
+const productGallery = Array.isArray(data.gallery) && data.gallery.length > 0
+  ? data.gallery
+  : [data.thumbnail];
+const hasProductGallery = productGallery.length > 1;
+const downloadUrl = productData.download_url || '/downloads/starter-pack/v1/adventury-starter-pack-demo-v1.zip';
 ---
 
 <BaseLayout title={seoTitle} description={seoDescription} lang={lang}>
-  <main class="surface-dark min-h-screen">
+<main class="surface-dark min-h-screen product-page">
     <!-- Hero Section -->
     <section class="pt-32 pb-16 relative overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent"></div>
@@ -107,7 +112,7 @@ const purchaseMode = productData.purchase_mode || (isFree ? 'download' : 'checko
             
             <div class="flex flex-wrap gap-4 pt-4">
               {purchaseMode === 'download' && (
-                <a href="#download" class="btn btn-primary btn-lg">
+                <a href={downloadUrl} download class="btn btn-primary btn-lg">
                   {data.hero?.primary_cta_label || 'Download Gratuito'}
                 </a>
               )}
@@ -138,12 +143,38 @@ const purchaseMode = productData.purchase_mode || (isFree ? 'download' : 'checko
           </div>
           
            <div class="product-preview">
-            <div class="aspect-video bg-neutral-800 rounded-xl overflow-hidden flex items-center justify-center relative shadow-2xl">
-              <img 
-                src={data.thumbnail} 
-                alt={data.name}
-                class="w-full h-full object-cover"
-              />
+            <div class="product-gallery" data-product-gallery data-autoplay-delay="3600" style="--product-gallery-delay: 3600ms;">
+              <div class="product-gallery__stage">
+                {productGallery.map((image, index) => (
+                  <img
+                    src={image}
+                    alt={index === 0 ? data.name : `${data.name} - variacao ${index + 1}`}
+                    class={`product-gallery__image ${index === 0 ? 'is-active' : ''}`}
+                    data-gallery-image
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                  />
+                ))}
+              </div>
+
+              {hasProductGallery && (
+                <>
+                  <div class="product-gallery__thumbs" aria-label="Variacoes de cor">
+                    {productGallery.map((image, index) => (
+                      <button
+                        type="button"
+                        class={`product-gallery__thumb ${index === 0 ? 'is-active' : ''}`}
+                        data-gallery-thumb
+                        data-gallery-index={index}
+                        aria-label={`Ver variacao ${index + 1}`}
+                        aria-pressed={index === 0 ? 'true' : 'false'}
+                      >
+                        <img src={image} alt="" loading="lazy" />
+                        <span class="product-gallery__thumb-progress" aria-hidden="true"></span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -290,7 +321,7 @@ const purchaseMode = productData.purchase_mode || (isFree ? 'download' : 'checko
         
         <div class="flex flex-wrap justify-center gap-4">
           {purchaseMode === 'download' && (
-            <a href="#" class="btn btn-primary btn-lg" id="download-free-btn">
+            <a href={downloadUrl} download class="btn btn-primary btn-lg" id="download-free-btn">
               Download Gratuito
             </a>
           )}
@@ -383,3 +414,227 @@ const purchaseMode = productData.purchase_mode || (isFree ? 'download' : 'checko
     });
   });
 </script>
+
+<script>
+  document.querySelectorAll('[data-product-gallery]').forEach((gallery) => {
+    const images = Array.from(gallery.querySelectorAll('[data-gallery-image]'));
+    const thumbs = Array.from(gallery.querySelectorAll('[data-gallery-thumb]'));
+    const delay = Number(gallery.getAttribute('data-autoplay-delay')) || 3600;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let activeIndex = 0;
+    let timer = null;
+
+    const setActive = (index, options = {}) => {
+      activeIndex = (index + images.length) % images.length;
+
+      images.forEach((image, imageIndex) => {
+        image.classList.toggle('is-active', imageIndex === activeIndex);
+      });
+
+      thumbs.forEach((item, itemIndex) => {
+        const active = itemIndex === activeIndex;
+        item.classList.toggle('is-active', active);
+        item.setAttribute('aria-pressed', String(active));
+      });
+
+      if (options.restart !== false) {
+        restart();
+      }
+    };
+
+    const stop = () => {
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+      gallery.classList.add('is-paused');
+    };
+
+    const start = () => {
+      if (reduceMotion || images.length < 2 || timer) return;
+
+      gallery.classList.remove('is-paused');
+      timer = window.setInterval(() => {
+        setActive(activeIndex + 1, { restart: false });
+      }, delay);
+    };
+
+    const restart = () => {
+      if (reduceMotion || images.length < 2) return;
+      stop();
+      window.setTimeout(start, 1400);
+    };
+
+    thumbs.forEach((thumb) => {
+      thumb.addEventListener('click', () => {
+        setActive(Number(thumb.getAttribute('data-gallery-index')));
+      });
+    });
+
+    gallery.addEventListener('mouseenter', stop);
+    gallery.addEventListener('mouseleave', start);
+    gallery.addEventListener('focusin', stop);
+    gallery.addEventListener('focusout', start);
+
+    setActive(0, { restart: false });
+    start();
+  });
+</script>
+
+<style>
+  .product-page .text-light {
+    color: rgb(var(--fg));
+  }
+
+  .product-page .text-neutral-300,
+  .product-page .text-neutral-400,
+  .product-page .text-neutral-500,
+  .product-page .text-neutral-600 {
+    color: rgb(var(--muted-fg));
+  }
+
+  .product-page .bg-neutral-900\/50,
+  .product-page .bg-neutral-800 {
+    background-color: rgb(var(--card-bg));
+    border-color: rgb(var(--border));
+  }
+
+  .product-page .border-neutral-800 {
+    border-color: rgb(var(--border));
+  }
+
+  [data-theme="light"] .product-page .text-neutral-300,
+  [data-theme="light"] .product-page .text-neutral-400,
+  [data-theme="light"] .product-page .text-neutral-500,
+  [data-theme="light"] .product-page .text-neutral-600 {
+    color: rgb(var(--muted-fg));
+  }
+
+  [data-theme="light"] .product-page .text-light {
+    color: rgb(var(--fg));
+  }
+
+  .product-gallery {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .product-gallery__stage {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border: 1px solid rgb(var(--color-light) / 0.12);
+    border-radius: 8px;
+    background: rgb(var(--color-dark));
+    box-shadow: 0 32px 90px -48px rgb(0 0 0 / 0.9);
+  }
+
+  .product-gallery__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1.025);
+    transition:
+      opacity 520ms ease,
+      transform 900ms ease;
+  }
+
+  .product-gallery__image.is-active {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .product-gallery__thumbs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(4.5rem, 1fr));
+    gap: 0.65rem;
+  }
+
+  .product-gallery__thumb {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border: 1px solid rgb(var(--color-light) / 0.16);
+    border-radius: 8px;
+    background: rgb(var(--color-dark));
+    cursor: pointer;
+    opacity: 0.68;
+    transition:
+      opacity 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
+  }
+
+  .product-gallery__thumb:hover,
+  .product-gallery__thumb.is-active {
+    opacity: 1;
+    border-color: rgb(var(--color-primary) / 0.86);
+    box-shadow: 0 12px 34px -24px rgb(var(--color-primary) / 0.9);
+    transform: translateY(-1px);
+  }
+
+  .product-gallery__thumb::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 0 1px rgb(var(--color-light) / 0.08);
+    pointer-events: none;
+  }
+
+  .product-gallery__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-gallery__thumb-progress {
+    position: absolute;
+    inset: auto 0 0;
+    height: 2px;
+    background: rgb(var(--color-primary));
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  .product-gallery__thumb.is-active .product-gallery__thumb-progress {
+    opacity: 1;
+    animation: product-gallery-progress var(--product-gallery-delay, 3600ms) linear infinite;
+  }
+
+  .product-gallery.is-paused .product-gallery__thumb-progress {
+    animation-play-state: paused;
+  }
+
+  @media (max-width: 48rem) {
+    .product-gallery__thumbs {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .product-gallery__image,
+    .product-gallery__thumb {
+      transition: none;
+    }
+
+    .product-gallery__thumb.is-active .product-gallery__thumb-progress {
+      animation: none;
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes product-gallery-progress {
+    from {
+      transform: scaleX(0);
+    }
+
+    to {
+      transform: scaleX(1);
+    }
+  }
+</style>
